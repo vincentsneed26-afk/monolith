@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Property for Sale in Chelsea — MONOLITH</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="images/favicon.svg" />
+  <link rel="shortcut icon" href="images/favicon.svg" />
+
+  <style>
+    /* ─── DESIGN TOKENS ────────────────────────────────────────── */
+    :root {
+      --font-heading: 'Manrope', sans-serif;
+      --font-body:    'Inter', sans-serif;
+
+      --bg:           #f9f9f9;
+      --bg-tonal:     #f3f3f3;
+      --text-primary: #1a1c1c;
+      --text-900:     #181818;
+      --text-body:    #474747;
+      --text-muted:   #9e9e9e;
+      --text-faint:   #6b7280;
+      --text-soft:    #4b5563;
+      --neutral-300:  #dcdcdc;
+      --neutral-white:#ffffff;
+      --neutral-black:#000000;
+      --cream:        #e5e2e1;
+      --divider:      #d9d9d9;
+
+      --h1-size: 100px; --h1-lh: 0.88;
+      --h2-size: 72px;  --h2-lh: 72px;
+      --h5-size: 24px;  --h5-lh: 28px;
+      --h6-size: 10px;  --h6-ls: 3.6px;
+      --body-lg: 18px;  --body-lg-lh: 26px;
+      --body-md: 16px;  --body-md-lh: 20px;
+      --btn-sm:  11px;  --btn-sm-ls: 1.1px;
+      --btn-lg:  14px;  --btn-lg-ls: 3.2px;
+
+      --px: 48px;
+      --py-section: 128px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text-primary);
+      overflow-x: hidden;
+    }
+    img  { display: block; max-width: 100%; }
+    a    { text-decoration: none; color: inherit; }
+
+    /* ─── SCROLL REVEALS ───────────────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.75s cubic-bezier(0.16,1,0.3,1),
+                  transform 0.75s cubic-bezier(0.16,1,0.3,1);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .delay-1 { transition-delay: 0.08s; }
+    .delay-2 { transition-delay: 0.16s; }
+    .delay-3 { transition-delay: 0.24s; }
+    .delay-4 { transition-delay: 0.32s; }
+    .delay-5 { transition-delay: 0.40s; }
+    .delay-6 { transition-delay: 0.48s; }
+
+    /* ─── NAV ──────────────────────────────────────────────────── */
+    .nav {
+      position: sticky; top: 0; z-index: 200;
+      background: rgba(249,249,249,0.82);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      width: 100%;
+      transition: background 0.3s ease;
+    }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 32px var(--px);
+      max-width: 1536px; margin: 0 auto;
+    }
+    .nav-logo {
+      font-family: var(--font-body); font-weight: 800;
+      font-size: 24px; letter-spacing: -1.2px;
+      text-transform: uppercase; color: var(--neutral-black);
+    }
+    .nav-links { display: flex; align-items: center; }
+    .nav-link {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--btn-sm); letter-spacing: var(--btn-sm-ls);
+      text-transform: uppercase; color: var(--text-faint);
+      padding-left: 48px; position: relative;
+      transition: color 0.2s ease;
+    }
+    .nav-link::after {
+      content: ''; position: absolute;
+      bottom: -2px; left: 48px; right: 0; height: 1px;
+      background: var(--neutral-black);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+    }
+    .nav-link:hover { color: var(--neutral-black); }
+    .nav-link:hover::after { transform: scaleX(1); }
+    .nav-link.active {
+      color: var(--neutral-black);
+      border-bottom: 2px solid var(--neutral-black);
+      padding-bottom: 3px;
+    }
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+    .nav-cta {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--btn-sm); letter-spacing: var(--btn-sm-ls);
+      text-transform: uppercase; color: var(--neutral-black);
+      border: 1px solid var(--neutral-black);
+      padding: 16px 32px;
+    }
+    .burger {
+      display: none; flex-direction: column;
+      justify-content: center; gap: 5px;
+      background: none; border: none;
+      padding: 4px; width: 32px; height: 32px;
+      cursor: pointer; flex-shrink: 0;
+    }
+    .burger span {
+      display: block; height: 1.5px;
+      background: var(--neutral-black);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .burger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .burger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .burger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    /* ─── MOBILE MENU ──────────────────────────────────────────── */
+    .mobile-menu {
+      display: none; position: fixed; inset: 0;
+      background: var(--bg); z-index: 199;
+      flex-direction: column; justify-content: center;
+      align-items: flex-start;
+      padding: 96px 24px 48px; gap: 8px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+    .mobile-menu.open { opacity: 1; pointer-events: all; }
+    .mobile-menu-link {
+      font-family: var(--font-heading); font-weight: 800;
+      font-size: 36px; letter-spacing: -1px;
+      text-transform: uppercase; color: var(--text-primary);
+      padding: 12px 0; border-bottom: 1px solid var(--neutral-300);
+      width: 100%; display: block;
+    }
+    .mobile-menu-footer {
+      margin-top: auto;
+      font-family: var(--font-heading); font-weight: 400;
+      font-size: var(--h6-size); letter-spacing: var(--h6-ls);
+      text-transform: uppercase; color: var(--text-muted);
+    }
+
+    /* ─── DIVIDER ──────────────────────────────────────────────── */
+    .divider { height: 1px; background: var(--neutral-300); margin: 0 var(--px); }
+
+    /* ─── FILTER BAR ───────────────────────────────────────────── */
+    .filter-bar {
+      display: flex; align-items: stretch;
+      height: 67px; overflow-x: auto;
+      padding: 0 var(--px);
+      scrollbar-width: none;
+    }
+    .filter-bar::-webkit-scrollbar { display: none; }
+
+    /* Sale/Rent toggle */
+    .filter-toggle {
+      display: flex; align-items: center;
+      gap: 30px; padding-right: 24px;
+      border-right: 1px solid var(--neutral-300);
+      flex-shrink: 0;
+    }
+    .filter-toggle-btn {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--btn-sm); letter-spacing: 0.8px;
+      text-transform: uppercase;
+      background: none; border: none; cursor: pointer;
+      color: var(--text-muted);
+      transition: color 0.2s ease;
+      white-space: nowrap;
+    }
+    .filter-toggle-btn.active { color: var(--text-900); }
+
+    /* Location input */
+    .filter-location {
+      display: flex; align-items: center;
+      padding: 0 24px;
+      border-right: 1px solid var(--neutral-300);
+      flex-shrink: 0;
+    }
+    .filter-location input {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--btn-sm); letter-spacing: 0.8px;
+      text-transform: uppercase; color: var(--text-900);
+      background: none; border: none; outline: none;
+      width: 160px; min-width: 80px;
+    }
+    .filter-location input::placeholder { color: var(--text-900); }
+
+    /* Dropdown filters */
+    .filter-dropdown {
+      position: relative; display: flex; align-items: center;
+      padding: 0 24px; gap: 4px;
+      border-right: 1px solid var(--neutral-300);
+      cursor: pointer; flex-shrink: 0;
+      transition: background 0.15s ease;
+    }
+    .filter-dropdown:hover { background: rgba(0,0,0,0.02); }
+    .filter-dropdown-label {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--btn-sm); letter-spacing: 0.8px;
+      text-transform: uppercase; color: var(--text-900);
+      white-space: nowrap; user-select: none;
+    }
+    .filter-dropdown-label.selected { color: var(--neutral-black); }
+    .filter-chevron {
+      width: 18px; height: 18px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.25s cubic-bezier(0.16,1,0.3,1);
+    }
+    .filter-chevron svg { width: 12px; height: 12px; }
+    .filter-dropdown.open .filter-chevron { transform: rotate(180deg); }
+
+    /* Dropdown panel */
+    .filter-panel {
+      position: absolute; top: calc(100% + 1px); left: 0;
+      min-width: 200px; background: var(--neutral-white);
+      border: 1px solid var(--neutral-300);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+      z-index: 150;
+      opacity: 0; transform: translateY(-6px);
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.16,1,0.3,1);
+    }
+    .filter-dropdown.open .filter-panel {
+      opacity: 1; transform: translateY(0); pointer-events: all;
+    }
+    .filter-option {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 20px;
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--btn-sm); letter-spacing: 0.8px;
+      text-transform: uppercase; color: var(--text-body);
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+      border-bottom: 1px solid rgba(220,220,220,0.4);
+    }
+    .filter-option:last-child { border-bottom: none; }
+    .filter-option:hover { background: var(--bg); color: var(--neutral-black); }
+    .filter-option.selected {
+      color: var(--neutral-black);
+      background: rgba(0,0,0,0.03);
+    }
+    .filter-option .check {
+      width: 14px; height: 14px; border: 1.5px solid var(--neutral-300);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: border-color 0.15s, background 0.15s;
+    }
+    .filter-option.selected .check {
+      background: var(--neutral-black); border-color: var(--neutral-black);
+    }
+    .filter-option .check svg { width: 8px; height: 8px; }
+
+    /* Refine button */
+    .filter-refine {
+      display: flex; align-items: center; justify-content: center;
+      gap: 10px; padding: 0 20px;
+      background: var(--text-900); border: 1px solid var(--text-900);
+      flex-shrink: 0; cursor: pointer; min-width: 140px;
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--btn-lg); letter-spacing: var(--btn-lg-ls);
+      text-transform: uppercase; color: white;
+      transition: background 0.2s ease;
+    }
+    .filter-refine:hover { background: #333; }
+    .filter-refine svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+    /* More filters */
+    .more-filters {
+      display: flex; align-items: center; justify-content: flex-end;
+      padding: 10px var(--px);
+    }
+    .more-filters a {
+      font-family: var(--font-body); font-weight: 400;
+      font-size: var(--body-md); line-height: var(--body-md-lh);
+      color: var(--text-body); text-decoration: underline;
+      text-decoration-color: rgba(71,71,71,0.4);
+      transition: color 0.2s ease;
+    }
+    .more-filters a:hover { color: var(--neutral-black); }
+
+    /* ─── HERO ─────────────────────────────────────────────────── */
+    .hero {
+      padding: 52px var(--px);
+      max-width: 1536px; margin: 0 auto;
+    }
+    .hero-inner { display: flex; align-items: flex-end; gap: 48px; }
+    .hero-left {
+      flex: 0 0 710px;
+      display: flex; flex-direction: column;
+      padding-bottom: 48px;
+    }
+    .hero-heading {
+      font-family: var(--font-heading); font-weight: 800;
+      font-size: var(--h1-size); line-height: var(--h1-lh);
+      letter-spacing: -5.6px; text-transform: uppercase;
+      color: var(--text-primary);
+    }
+    .hero-right {
+      flex: 1; border-left: 1px solid var(--neutral-300);
+      display: flex; flex-direction: column;
+    }
+    .hero-body {
+      font-family: var(--font-body); font-size: var(--body-lg);
+      line-height: var(--body-lg-lh); color: var(--text-body);
+      padding: 0 32px 32px; max-width: 448px;
+    }
+    .hero-rule { height: 1px; background: var(--neutral-300); margin-bottom: 32px; }
+    .hero-cta {
+      display: flex; align-items: center;
+      gap: 10px; padding-left: 32px;
+    }
+    .hero-cta-label {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--btn-sm); letter-spacing: var(--btn-sm-ls);
+      text-transform: uppercase; color: var(--neutral-black); flex: 1;
+    }
+    .hero-arrow {
+      width: 24px; height: 24px;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+    }
+    .hero-cta:hover .hero-arrow { transform: translateX(6px); }
+    .hero-arrow svg { width: 16px; height: 16px; }
+
+    /* ─── RESULTS GRID ─────────────────────────────────────────── */
+    .results-section {
+      padding: 0 var(--px) 80px;
+      max-width: calc(1184px + var(--px) * 2);
+      margin: 0 auto; width: 100%;
+    }
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 50px 16px;
+      margin-bottom: 50px;
+    }
+
+    /* ─── PROPERTY CARD ────────────────────────────────────────── */
+    .prop-card {
+      display: flex; flex-direction: column; gap: 16px;
+      cursor: pointer;
+    }
+    .prop-meta {
+      display: flex; align-items: center;
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--btn-sm); letter-spacing: var(--btn-sm-ls);
+      text-transform: uppercase; color: var(--text-muted);
+    }
+    .prop-ref { flex: 1; }
+    .prop-area { text-align: right; white-space: nowrap; }
+
+    .prop-image-wrap {
+      position: relative; overflow: hidden;
+      height: 338px; background: var(--bg-tonal);
+    }
+    .prop-image-wrap img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.7s cubic-bezier(0.16,1,0.3,1),
+                  filter 0.5s ease;
+      transform-origin: center;
+    }
+    .prop-card:hover .prop-image-wrap img {
+      transform: scale(1.05);
+    }
+    /* Subtle overlay on hover */
+    .prop-image-wrap::after {
+      content: ''; position: absolute; inset: 0;
+      background: rgba(24,24,24,0);
+      transition: background 0.4s ease;
+      pointer-events: none;
+    }
+    .prop-card:hover .prop-image-wrap::after {
+      background: rgba(24,24,24,0.06);
+    }
+    /* View label on hover */
+    .prop-image-wrap .prop-view-label {
+      position: absolute; bottom: 16px; right: 16px;
+      background: rgba(249,249,249,0.92);
+      backdrop-filter: blur(6px);
+      padding: 6px 14px;
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--btn-sm); letter-spacing: var(--btn-sm-ls);
+      text-transform: uppercase; color: var(--neutral-black);
+      opacity: 0; transform: translateY(6px);
+      transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.16,1,0.3,1);
+    }
+    .prop-card:hover .prop-view-label { opacity: 1; transform: translateY(0); }
+
+    .prop-price-block {
+      display: flex; flex-direction: column; gap: 3px;
+    }
+    .prop-price {
+      font-family: var(--font-heading); font-weight: 800;
+      font-size: var(--h5-size); line-height: var(--h5-lh);
+      color: var(--text-900); white-space: nowrap;
+    }
+    .prop-address {
+      font-family: var(--font-heading); font-weight: 400;
+      font-size: var(--h5-size); line-height: var(--h5-lh);
+      color: var(--text-900); text-transform: uppercase;
+    }
+    .prop-divider { height: 1px; background: var(--divider); }
+    .prop-details {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--btn-sm); letter-spacing: var(--btn-sm-ls);
+      text-transform: uppercase; color: var(--text-body);
+    }
+
+    /* ─── LOAD MORE ────────────────────────────────────────────── */
+    .load-more-wrap { display: flex; }
+    .load-more-btn {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--btn-sm); letter-spacing: var(--btn-sm-ls);
+      text-transform: uppercase; color: var(--neutral-black);
+      border: 1px solid var(--neutral-black);
+      padding: 16px 32px; background: none; cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .load-more-btn:hover { background: var(--neutral-black); color: white; }
+
+    /* ─── CTA SECTION ──────────────────────────────────────────── */
+    .cta-section { background: var(--neutral-black); padding: var(--py-section) var(--px); }
+    .cta-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      max-width: 1536px; margin: 0 auto;
+    }
+    .cta-left { display: flex; flex-direction: column; gap: 24px; }
+    .cta-heading {
+      font-family: var(--font-heading); font-weight: 800;
+      font-size: var(--h2-size); line-height: var(--h2-lh);
+      color: var(--cream); text-transform: uppercase;
+    }
+    .cta-heading .line { display: block; overflow: hidden; }
+    .cta-heading .line span {
+      display: block; transform: translateY(100%);
+      transition: transform 1s cubic-bezier(0.16,1,0.3,1);
+    }
+    .cta-heading.visible .line:nth-child(1) span { transform: translateY(0); transition-delay: 0s; }
+    .cta-heading.visible .line:nth-child(2) span { transform: translateY(0); transition-delay: 0.15s; }
+    .cta-sub {
+      font-family: var(--font-heading); font-weight: 400;
+      font-size: var(--h6-size); letter-spacing: var(--h6-ls);
+      color: var(--cream); text-transform: uppercase; opacity: 0.6;
+    }
+    .cta-right { display: flex; flex-direction: column; gap: 16px; }
+    .btn-primary {
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--cream); color: var(--neutral-black);
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--btn-lg); letter-spacing: var(--btn-lg-ls);
+      text-transform: uppercase; padding: 24px 90px;
+    }
+    .btn-secondary {
+      display: inline-flex; align-items: center; justify-content: center;
+      background: transparent; color: var(--cream);
+      border: 1px solid rgba(229,226,225,0.2);
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--btn-lg); letter-spacing: var(--btn-lg-ls);
+      text-transform: uppercase; padding: 25px 65px;
+    }
+
+    /* ─── FOOTER ───────────────────────────────────────────────── */
+    footer { background: var(--neutral-white); }
+    .footer-border { height: 1px; background: var(--neutral-300); }
+    .footer-inner {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 48px; max-width: 1536px; margin: 0 auto;
+      padding: 96px var(--px);
+    }
+    .footer-logo {
+      font-family: var(--font-body); font-weight: 800;
+      font-size: 20px; line-height: 28px;
+      text-transform: uppercase; color: var(--neutral-black);
+      margin-bottom: 32px;
+    }
+    .footer-tagline, .footer-address {
+      font-family: var(--font-heading); font-weight: 400;
+      font-size: var(--h6-size); letter-spacing: 1.6px;
+      text-transform: uppercase; color: var(--neutral-black);
+      line-height: 16.25px;
+    }
+    .footer-col { display: flex; flex-direction: column; gap: 24px; }
+    .footer-col-title {
+      font-family: var(--font-body); font-weight: 600;
+      font-size: var(--h6-size); letter-spacing: 3.2px;
+      text-transform: uppercase; color: var(--neutral-black); opacity: 0.4;
+    }
+    .footer-list { display: flex; flex-direction: column; }
+    .footer-list a {
+      font-family: var(--font-heading); font-weight: 400;
+      font-size: var(--h6-size); letter-spacing: 1.6px;
+      text-transform: uppercase; color: var(--text-soft);
+      padding: 6.5px 0 2.5px; display: block;
+      transition: color 0.2s ease;
+    }
+    .footer-list a:hover { color: var(--neutral-black); }
+    .footer-newsletter { display: flex; flex-direction: column; gap: 24px; }
+    .newsletter-row {
+      display: flex; align-items: flex-end;
+      border-bottom: 1px solid rgba(0,0,0,0.2); padding-bottom: 9px;
+    }
+    .newsletter-input {
+      flex: 1; border: none; background: transparent; outline: none;
+      font-family: var(--font-body); font-weight: 600;
+      font-size: var(--h6-size); letter-spacing: 1px;
+      text-transform: uppercase; color: var(--neutral-black); padding: 12px;
+    }
+    .newsletter-input::placeholder { color: #9ca3af; }
+    .newsletter-submit {
+      background: none; border: none; cursor: pointer;
+      font-family: var(--font-body); font-weight: 600;
+      font-size: var(--h6-size); text-transform: uppercase;
+      color: var(--neutral-black); padding: 12px 0;
+      transition: opacity 0.2s ease;
+    }
+    .newsletter-submit:hover { opacity: 0.5; }
+    .footer-copy {
+      font-family: var(--font-heading); font-weight: 400;
+      font-size: var(--h6-size); letter-spacing: 1.6px;
+      text-transform: uppercase; color: var(--text-faint); line-height: 15px;
+    }
+
+    /* ─── RESPONSIVE ────────────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      :root { --px: 32px; --py-section: 80px; --h1-size: 72px; }
+      .hero-left { flex: 0 0 480px; }
+      .results-grid { grid-template-columns: repeat(2, 1fr); }
+      .cta-heading { font-size: 52px; line-height: 56px; }
+      .footer-inner { grid-template-columns: repeat(2,1fr); padding: 64px var(--px); }
+    }
+
+    @media (max-width: 768px) {
+      :root { --px: 20px; --py-section: 60px; --h1-size: 42px; }
+      .nav-links { display: none; }
+      .burger { display: flex; }
+      .mobile-menu { display: flex; }
+      .nav-inner { padding: 20px var(--px); }
+      .nav-logo { font-size: 18px; }
+      .divider { margin: 0 var(--px); }
+
+      .filter-bar { height: auto; flex-wrap: nowrap; padding: 0 var(--px); }
+      .filter-toggle { height: 52px; }
+      .filter-location, .filter-dropdown { height: 52px; }
+      .filter-refine { height: 52px; }
+
+      .hero { padding: 32px var(--px) 28px; }
+      .hero-inner { flex-direction: column; align-items: flex-start; gap: 24px; }
+      .hero-left { flex: unset; width: 100%; padding-bottom: 0; }
+      .hero-heading { font-size: 38px; line-height: 0.9; letter-spacing: -2px; }
+      .hero-right {
+        border-left: none; border-top: 1px solid var(--neutral-300);
+        padding-top: 20px; width: 100%;
+      }
+      .hero-body { padding: 0 0 20px; max-width: 100%; font-size: 15px; }
+      .hero-cta { padding-left: 0; }
+
+      .results-section { padding: 0 var(--px) 48px; }
+      .results-grid { grid-template-columns: 1fr; gap: 36px 0; }
+      .prop-image-wrap { height: 260px; }
+
+      .cta-section { padding: 48px var(--px); }
+      .cta-inner { flex-direction: column; align-items: flex-start; gap: 32px; }
+      .cta-heading { font-size: 32px; line-height: 36px; }
+      .cta-right { width: 100%; }
+      .btn-primary, .btn-secondary { width: 100%; padding: 20px 24px; justify-content: center; }
+
+      .footer-inner { grid-template-columns: 1fr; gap: 32px; padding: 40px var(--px); }
+      .more-filters { padding: 8px var(--px); }
+    }
+
+    @media (max-width: 480px) {
+      .results-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ─────────────────────────────────────────────────────── -->
+<nav class="nav" id="mainNav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">MONOLITH</a>
+    <div class="nav-links">
+      <a href="#" class="nav-link active" style="padding-left:0;border-bottom:2px solid black;padding-bottom:3px;">LISTINGS</a>
+      <a href="#" class="nav-link">ARCHITECTS</a>
+      <a href="#" class="nav-link">JOURNAL</a>
+      <a href="#" class="nav-link">CONTACT</a>
+    </div>
+    <div class="nav-right">
+      <a href="#" class="nav-cta">ENQUIRE</a>
+      <button class="burger" id="burgerBtn" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+  <a href="#" class="mobile-menu-link">LISTINGS</a>
+  <a href="#" class="mobile-menu-link">ARCHITECTS</a>
+  <a href="#" class="mobile-menu-link">JOURNAL</a>
+  <a href="#" class="mobile-menu-link">CONTACT</a>
+  <p class="mobile-menu-footer">ESTABLISHED 2024</p>
+</div>
+
+<div class="divider"></div>
+
+<!-- ── FILTER BAR ────────────────────────────────────────────── -->
+<div class="filter-bar" id="filterBar">
+
+  <!-- Sale / Rent -->
+  <div class="filter-toggle">
+    <button class="filter-toggle-btn active" data-type="sale">FOR SALE</button>
+    <button class="filter-toggle-btn" data-type="rent">TO RENT</button>
+  </div>
+
+  <!-- Location -->
+  <div class="filter-location">
+    <input type="text" value="Chelsea" placeholder="Location" aria-label="Location" />
+  </div>
+
+  <!-- Property Type -->
+  <div class="filter-dropdown" id="dd-type" aria-haspopup="listbox">
+    <span class="filter-dropdown-label selected" id="dd-type-label">HOUSE</span>
+    <span class="filter-chevron"><svg viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    <div class="filter-panel" role="listbox">
+      <div class="filter-option selected" data-value="HOUSE" role="option">HOUSE <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1 4l2 2 4-4" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      <div class="filter-option" data-value="FLAT" role="option">FLAT <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1 4l2 2 4-4" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      <div class="filter-option" data-value="STUDIO" role="option">STUDIO <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1 4l2 2 4-4" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      <div class="filter-option" data-value="PENTHOUSE" role="option">PENTHOUSE <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1 4l2 2 4-4" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      <div class="filter-option" data-value="TOWNHOUSE" role="option">TOWNHOUSE <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1 4l2 2 4-4" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+    </div>
+  </div>
+
+  <!-- Min Price -->
+  <div class="filter-dropdown" id="dd-min" aria-haspopup="listbox">
+    <span class="filter-dropdown-label" id="dd-min-label">MIN PRICE</span>
+    <span class="filter-chevron"><svg viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    <div class="filter-panel" role="listbox">
+      <div class="filter-option" data-value="NO MIN" role="option">NO MIN <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1 4l2 2 4-4" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      <div class="filter-option" data-value="£500,000" role="option">£500,000 <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1 4l2 2 4-4" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      <div class="filter-option" data-value="£750,000" role="option">£750,000 <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1 4l2 2 4-4" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      <div class="filter-option selected" data-value="£1,000,000" role="option">£1,000,000 <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1 4l2 2 4-4" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      <div class="filter-option" data-value="£1,500,000" role="option">£1,500,000 <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1 4l2 2 4-4" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      <div class="filter-option" data-value="£2,000,000" role="option">£2,000,000 <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1 4l2 2 4-4" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+    </div>
+  </div>
+
+  <!-- Max Price -->
+  <div class="filter-dropdown" id="dd-max" aria-haspopup="listbox">
+    <span class="filter-dropdown-label" id="dd-max-label">MAX PRICE</span>
+    <span class="filter-chevron"><svg viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    <div class="filter-panel" role="listbox">
+      <div class="filter-option" data-value="£1,500,000" role="option">£1,500,000 <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1 4l2 2 4-4" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      <div class="filter-option selected" data-value="£2,000,000" role="option">£2,000,000 <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1 4l2 2 4-4" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      <div class="filter-option" data-value="£3,000,000" role="option">£3,000,000 <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1 4l2 2 4-4" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      <div class="filter-option" data-value="£5,000,000" role="option">£5,000,000 <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1 4l2 2 4-4" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      <div class="filter-option" data-value="NO MAX" role="option">NO MAX <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1 4l2 2 4-4" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+    </div>
+  </div>
+
+  <!-- Bedrooms -->
+  <div class="filter-dropdown" id="dd-beds" aria-haspopup="listbox">
+    <span class="filter-dropdown-label" id="dd-beds-label">BEDROOMS</span>
+    <span class="filter-chevron"><svg viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    <div class="filter-panel" role="listbox">
+      <div class="filter-option" data-value="1+" role="option">1+ BEDS <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1 4l2 2 4-4" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      <div class="filter-option" data-value="2+" role="option">2+ BEDS <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1 4l2 2 4-4" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      <div class="filter-option selected" data-value="3+" role="option">3+ BEDS <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1 4l2 2 4-4" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      <div class="filter-option" data-value="4+" role="option">4+ BEDS <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1 4l2 2 4-4" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      <div class="filter-option" data-value="5+" role="option">5+ BEDS <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1 4l2 2 4-4" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+    </div>
+  </div>
+
+  <!-- Bath -->
+  <div class="filter-dropdown" id="dd-bath" aria-haspopup="listbox">
+    <span class="filter-dropdown-label" id="dd-bath-label">BATH</span>
+    <span class="filter-chevron"><svg viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    <div class="filter-panel" role="listbox">
+      <div class="filter-option" data-value="1+" role="option">1+ BATHS <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1 4l2 2 4-4" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      <div class="filter-option selected" data-value="2+" role="option">2+ BATHS <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1 4l2 2 4-4" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      <div class="filter-option" data-value="3+" role="option">3+ BATHS <span class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1 4l2 2 4-4" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+    </div>
+  </div>
+
+  <!-- Refine button -->
+  <button class="filter-refine">
+    REFINE
+    <svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+</div>
+
+<div class="divider"></div>
+
+<!-- More filters -->
+<div class="more-filters">
+  <a href="#">show more filters</a>
+</div>
+
+<!-- ── HERO ──────────────────────────────────────────────────── -->
+<div style="max-width:1536px;margin:0 auto;">
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-left reveal">
+        <h1 class="hero-heading">PROPERTY<br/>FOR SALE<br/>IN CHELSEA</h1>
+      </div>
+      <div class="hero-right reveal delay-2">
+        <p class="hero-body">Curating spaces where brutalist honesty meets refined luxury. We don't sell property; we represent architectural statements.</p>
+        <div class="hero-rule"></div>
+        <a href="#" class="hero-cta">
+          <span class="hero-cta-label">VIEW RECENT ADDITIONS</span>
+          <span class="hero-arrow">
+            <svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ── RESULTS GRID ───────────────────────────────────────────── -->
+<div class="results-section">
+  <div class="results-grid" id="resultsGrid">
+
+    <!-- Card 1 -->
+    <article class="prop-card reveal delay-1">
+      <div class="prop-meta">
+        <span class="prop-ref">REF: CH-124</span>
+        <span class="prop-area">Chelsea</span>
+      </div>
+      <div class="prop-image-wrap">
+        <img src="images/property-chelsea-1.jpg" alt="Cadogan Gardens" loading="lazy" />
+        <span class="prop-view-label">VIEW PROPERTY</span>
+      </div>
+      <div class="prop-price-block">
+        <p class="prop-price">£1,250,000</p>
+        <p class="prop-address">Cadogan Gardens</p>
+      </div>
+      <div class="prop-divider"></div>
+      <p class="prop-details">3 BEDROOMS &nbsp;•&nbsp; 2 BATHROOMS &nbsp;•&nbsp; 1 RECEPTION</p>
+    </article>
+
+    <!-- Card 2 -->
+    <article class="prop-card reveal delay-2">
+      <div class="prop-meta">
+        <span class="prop-ref">REF: CH-131</span>
+        <span class="prop-area">Chelsea</span>
+      </div>
+      <div class="prop-image-wrap">
+        <img src="images/property-chelsea-2.jpg" alt="Sloane Square" loading="lazy" />
+        <span class="prop-view-label">VIEW PROPERTY</span>
+      </div>
+      <div class="prop-price-block">
+        <p class="prop-price">£1,875,000</p>
+        <p class="prop-address">Sloane Square</p>
+      </div>
+      <div class="prop-divider"></div>
+      <p class="prop-details">4 BEDROOMS &nbsp;•&nbsp; 3 BATHROOMS &nbsp;•&nbsp; 2 RECEPTIONS</p>
+    </article>
+
+    <!-- Card 3 -->
+    <article class="prop-card reveal delay-3">
+      <div class="prop-meta">
+        <span class="prop-ref">REF: CH-109</span>
+        <span class="prop-area">Chelsea</span>
+      </div>
+      <div class="prop-image-wrap">
+        <img src="images/property-chelsea-3.jpg" alt="Royal Hospital Road" loading="lazy" />
+        <span class="prop-view-label">VIEW PROPERTY</span>
+      </div>
+      <div class="prop-price-block">
+        <p class="prop-price">£2,100,000</p>
+        <p class="prop-address">Royal Hospital Road</p>
+      </div>
+      <div class="prop-divider"></div>
+      <p class="prop-details">5 BEDROOMS &nbsp;•&nbsp; 4 BATHROOMS &nbsp;•&nbsp; 2 RECEPTIONS</p>
+    </article>
+
+    <!-- Card 4 -->
+    <article class="prop-card reveal delay-1">
+      <div class="prop-meta">
+        <span class="prop-ref">REF: CH-147</span>
+        <span class="prop-area">Chelsea</span>
+      </div>
+      <div class="prop-image-wrap">
+        <img src="images/property-chelsea-4.jpg" alt="Flood Street" loading="lazy" />
+        <span class="prop-view-label">VIEW PROPERTY</span>
+      </div>
+      <div class="prop-price-block">
+        <p class="prop-price">£1,650,000</p>
+        <p class="prop-address">Flood Street</p>
+      </div>
+      <div class="prop-divider"></div>
+      <p class="prop-details">3 BEDROOMS &nbsp;•&nbsp; 2 BATHROOMS &nbsp;•&nbsp; 1 RECEPTION</p>
+    </article>
+
+    <!-- Card 5 -->
+    <article class="prop-card reveal delay-2">
+      <div class="prop-meta">
+        <span class="prop-ref">REF: CH-158</span>
+        <span class="prop-area">Chelsea</span>
+      </div>
+      <div class="prop-image-wrap">
+        <img src="images/property-chelsea-5.jpg" alt="Cheyne Walk" loading="lazy" />
+        <span class="prop-view-label">VIEW PROPERTY</span>
+      </div>
+      <div class="prop-price-block">
+        <p class="prop-price">£3,200,000</p>
+        <p class="prop-address">Cheyne Walk</p>
+      </div>
+      <div class="prop-divider"></div>
+      <p class="prop-details">6 BEDROOMS &nbsp;•&nbsp; 5 BATHROOMS &nbsp;•&nbsp; 3 RECEPTIONS</p>
+    </article>
+
+    <!-- Card 6 -->
+    <article class="prop-card reveal delay-3">
+      <div class="prop-meta">
+        <span class="prop-ref">REF: CH-162</span>
+        <span class="prop-area">Chelsea</span>
+      </div>
+      <div class="prop-image-wrap">
+        <img src="images/property-chelsea-6.jpg" alt="King's Road" loading="lazy" />
+        <span class="prop-view-label">VIEW PROPERTY</span>
+      </div>
+      <div class="prop-price-block">
+        <p class="prop-price">£1,495,000</p>
+        <p class="prop-address">King's Road</p>
+      </div>
+      <div class="prop-divider"></div>
+      <p class="prop-details">3 BEDROOMS &nbsp;•&nbsp; 2 BATHROOMS &nbsp;•&nbsp; 1 RECEPTION</p>
+    </article>
+
+  </div>
+
+  <!-- Load More -->
+  <div class="load-more-wrap reveal">
+    <button class="load-more-btn">LOAD MORE PROPERTIES</button>
+  </div>
+</div>
+
+<!-- ── CTA ───────────────────────────────────────────────────── -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <div class="cta-left">
+      <h2 class="cta-heading" id="ctaHeading">
+        <span class="line"><span>BUILD YOUR</span></span>
+        <span class="line"><span>PRIVATE GALLERY.</span></span>
+      </h2>
+      <p class="cta-sub reveal delay-2">EXCLUSIVE ADVISORY SERVICES AVAILABLE UPON REQUEST.</p>
+    </div>
+    <div class="cta-right reveal delay-3">
+      <a href="#" class="btn-primary">START ENQUIRY</a>
+      <a href="#" class="btn-secondary">DOWNLOAD DOSSIER</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ────────────────────────────────────────────────── -->
+<div class="footer-border"></div>
+<footer>
+  <div class="footer-inner">
+    <div class="reveal">
+      <div class="footer-logo">MONOLITH</div>
+      <p class="footer-tagline" style="margin-bottom:16px;">A GLOBAL NETWORK OF ARCHITECTURAL<br/>REAL ESTATE SPECIALISTS.</p>
+      <p class="footer-address">99 HUDSON STREET,<br/>NEW YORK, NY 10013</p>
+    </div>
+    <div class="footer-col reveal delay-1">
+      <span class="footer-col-title">CONNECT</span>
+      <div class="footer-list">
+        <a href="#">INSTAGRAM</a>
+        <a href="#">LINKEDIN</a>
+      </div>
+    </div>
+    <div class="footer-col reveal delay-2">
+      <span class="footer-col-title">LEGAL</span>
+      <div class="footer-list">
+        <a href="#">PRIVACY</a>
+        <a href="#">TERMS</a>
+      </div>
+    </div>
+    <div class="footer-newsletter reveal delay-3">
+      <span class="footer-col-title">NEWSLETTER</span>
+      <div class="newsletter-row">
+        <input class="newsletter-input" type="email" placeholder="EMAIL ADDRESS" />
+        <button class="newsletter-submit">JOIN</button>
+      </div>
+      <p class="footer-copy">© 2024 ARCH_ESTATE. THE BLUEPRINT OF<br/>SPACE.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* ── Scroll reveals ───────────────────────────────── */
+  const revealEls = document.querySelectorAll('.reveal, .cta-heading');
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  revealEls.forEach(el => io.observe(el));
+
+  /* Trigger hero immediately */
+  document.querySelectorAll('.hero .reveal').forEach((el, i) => {
+    setTimeout(() => el.classList.add('visible'), 150 + i * 120);
+  });
+
+  /* ── Nav on scroll ────────────────────────────────── */
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => {
+    nav.style.background = window.scrollY > 60
+      ? 'rgba(249,249,249,0.96)' : 'rgba(249,249,249,0.82)';
+  }, { passive: true });
+
+  /* ── Burger menu ──────────────────────────────────── */
+  const burgerBtn  = document.getElementById('burgerBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  burgerBtn.addEventListener('click', () => {
+    const open = mobileMenu.classList.toggle('open');
+    burgerBtn.classList.toggle('open', open);
+    burgerBtn.setAttribute('aria-expanded', open);
+    mobileMenu.setAttribute('aria-hidden', !open);
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+  mobileMenu.querySelectorAll('.mobile-menu-link').forEach(l => {
+    l.addEventListener('click', () => {
+      mobileMenu.classList.remove('open');
+      burgerBtn.classList.remove('open');
+      burgerBtn.setAttribute('aria-expanded', false);
+      document.body.style.overflow = '';
+    });
+  });
+
+  /* ── Sale / Rent toggle ───────────────────────────── */
+  document.querySelectorAll('.filter-toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-toggle-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  /* ── Dropdown logic ───────────────────────────────── */
+  const dropdowns = document.querySelectorAll('.filter-dropdown');
+
+  dropdowns.forEach(dd => {
+    dd.addEventListener('click', e => {
+      const isOpen = dd.classList.contains('open');
+      // close all
+      dropdowns.forEach(d => d.classList.remove('open'));
+      if (!isOpen) dd.classList.add('open');
+      e.stopPropagation();
+    });
+
+    // option selection
+    dd.querySelectorAll('.filter-option').forEach(opt => {
+      opt.addEventListener('click', e => {
+        e.stopPropagation();
+        dd.querySelectorAll('.filter-option').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        const labelEl = dd.querySelector('.filter-dropdown-label');
+        labelEl.textContent = opt.dataset.value;
+        labelEl.classList.add('selected');
+        dd.classList.remove('open');
+      });
+    });
+  });
+
+  // Close dropdowns on outside click
+  document.addEventListener('click', () => {
+    dropdowns.forEach(d => d.classList.remove('open'));
+  });
+
+  // Pre-populate labels from selected options
+  dropdowns.forEach(dd => {
+    const sel = dd.querySelector('.filter-option.selected');
+    if (sel) {
+      const labelEl = dd.querySelector('.filter-dropdown-label');
+      labelEl.textContent = sel.dataset.value;
+      labelEl.classList.add('selected');
+    }
+  });
+</script>
+</body>
+</html>
