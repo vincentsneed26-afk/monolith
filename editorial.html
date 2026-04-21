@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Editorial — MONOLITH</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="images/favicon.svg" />
+  <link rel="shortcut icon" href="images/favicon.svg" />
+
+  <style>
+    /* ─── DESIGN TOKENS ────────────────────────────────────────── */
+    :root {
+      --font-heading: 'Manrope', sans-serif;
+      --font-body:    'Inter', sans-serif;
+
+      --bg:           #ffffff;
+      --bg-tonal:     #f3f3f3;
+      --text-primary: #1a1c1c;
+      --text-900:     #181818;
+      --text-body:    #474747;
+      --text-muted:   #9e9e9e;
+      --text-faint:   #6b7280;
+      --text-soft:    #4b5563;
+      --neutral-300:  #dcdcdc;
+      --neutral-white:#ffffff;
+      --neutral-black:#000000;
+      --cream:        #e5e2e1;
+      --divider:      #d9d9d9;
+
+      --h2-size: 72px;  --h2-lh: 72px;
+      --h5-size: 24px;  --h5-lh: 28px;
+      --h6-size: 10px;  --h6-ls: 3.6px;
+      --body-lg: 18px;  --body-lg-lh: 26px;
+      --body-md: 16px;  --body-md-lh: 30px;
+      --btn-sm:  11px;  --btn-sm-ls: 1.1px;
+      --btn-lg:  14px;  --btn-lg-ls: 3.2px;
+
+      --px: 48px;
+      --py-section: 128px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text-primary);
+      overflow-x: hidden;
+    }
+    img  { display: block; max-width: 100%; }
+    a    { text-decoration: none; color: inherit; }
+
+    /* ─── SCROLL REVEALS ───────────────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.75s cubic-bezier(0.16,1,0.3,1),
+                  transform 0.75s cubic-bezier(0.16,1,0.3,1);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .delay-1 { transition-delay: 0.08s; }
+    .delay-2 { transition-delay: 0.16s; }
+    .delay-3 { transition-delay: 0.24s; }
+    .delay-4 { transition-delay: 0.32s; }
+    .delay-5 { transition-delay: 0.40s; }
+    .delay-6 { transition-delay: 0.48s; }
+
+    /* ─── NAV ──────────────────────────────────────────────────── */
+    .nav {
+      position: sticky; top: 0; z-index: 200;
+      background: #ffffff;
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      width: 100%;
+    }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 32px var(--px); max-width: 1536px; margin: 0 auto;
+    }
+    .nav-logo {
+      font-family: var(--font-body); font-weight: 800;
+      font-size: 24px; letter-spacing: -1.2px;
+      text-transform: uppercase; color: var(--neutral-black);
+    }
+    .nav-links { display: flex; align-items: center; }
+    .nav-link {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--btn-sm); letter-spacing: var(--btn-sm-ls);
+      text-transform: uppercase; color: var(--text-faint);
+      padding-left: 48px; position: relative;
+      transition: color 0.2s ease;
+    }
+    .nav-link::after {
+      content: ''; position: absolute;
+      bottom: -2px; left: 48px; right: 0; height: 1px;
+      background: var(--neutral-black);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+    }
+    .nav-link:hover { color: var(--neutral-black); }
+    .nav-link:hover::after { transform: scaleX(1); }
+    .nav-link.active {
+      color: var(--neutral-black);
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 5px;
+    }
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+    .nav-cta {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--btn-sm); letter-spacing: var(--btn-sm-ls);
+      text-transform: uppercase; color: var(--neutral-black);
+      border: 1px solid var(--neutral-black); padding: 16px 32px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .nav-cta:hover { background: var(--neutral-black); color: var(--neutral-white); }
+    .burger {
+      display: none; flex-direction: column;
+      justify-content: center; gap: 5px;
+      background: none; border: none;
+      padding: 4px; width: 32px; height: 32px;
+      cursor: pointer; flex-shrink: 0;
+    }
+    .burger span {
+      display: block; height: 1.5px;
+      background: var(--neutral-black);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .burger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .burger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .burger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    /* ─── MOBILE MENU ──────────────────────────────────────────── */
+    .mobile-menu {
+      display: none; position: fixed; inset: 0;
+      background: var(--bg); z-index: 199;
+      flex-direction: column; justify-content: center;
+      align-items: flex-start; padding: 96px 24px 48px; gap: 8px;
+      opacity: 0; pointer-events: none; transition: opacity 0.35s ease;
+    }
+    .mobile-menu.open { opacity: 1; pointer-events: all; }
+    .mobile-menu-link {
+      font-family: var(--font-heading); font-weight: 800;
+      font-size: 36px; letter-spacing: -1px;
+      text-transform: uppercase; color: var(--text-primary);
+      padding: 12px 0; border-bottom: 1px solid var(--neutral-300);
+      width: 100%; display: block;
+    }
+    .mobile-menu-footer {
+      margin-top: auto;
+      font-family: var(--font-heading); font-weight: 400;
+      font-size: var(--h6-size); letter-spacing: var(--h6-ls);
+      text-transform: uppercase; color: var(--text-muted);
+    }
+
+    /* ─── DIVIDER ──────────────────────────────────────────────── */
+    .divider { height: 1px; background: var(--neutral-300); margin: 0 var(--px); }
+
+    /* ─── HERO ─────────────────────────────────────────────────── */
+    .hero-section { padding: 80px var(--px); }
+    .hero-inner {
+      max-width: 1536px; margin: 0 auto;
+      display: flex; align-items: flex-end; gap: 48px;
+      justify-content: center;
+    }
+    .hero-text { max-width: 680px; }
+    .hero-image {
+      flex: 0 0 347px; height: 332px; overflow: hidden; flex-shrink: 0;
+    }
+    .hero-image img {
+      width: 100%; height: 100%; object-fit: cover;
+      object-position: center;
+    }
+    .hero-text {
+      flex: 1; display: flex; flex-direction: column;
+      gap: 22px; padding-bottom: 4px;
+    }
+    .hero-eyebrow {
+      font-family: var(--font-heading); font-weight: 400;
+      font-size: var(--h6-size); letter-spacing: var(--h6-ls);
+      text-transform: uppercase; color: #777;
+    }
+    .hero-heading {
+      font-family: var(--font-heading); font-weight: 800;
+      font-size: var(--h2-size); line-height: var(--h2-lh);
+      letter-spacing: -1px; color: var(--text-primary);
+      text-transform: uppercase;
+    }
+    .hero-byline {
+      display: flex; align-items: center; gap: 16px;
+      padding-top: 7px;
+    }
+    .hero-byline-text {
+      font-family: var(--font-body); font-weight: 400;
+      font-size: var(--body-lg); line-height: var(--body-lg-lh);
+      color: var(--text-body);
+    }
+    .hero-byline-divider {
+      width: 2px; height: 25px; background: var(--divider); flex-shrink: 0;
+    }
+
+    /* ─── ARTICLE LIST ─────────────────────────────────────────── */
+    .articles-section {
+      padding: 40px 0 80px;
+    }
+    .articles-outer {
+      max-width: 1536px; margin: 0 auto;
+      padding: 0 248px;
+    }
+    .article-row {
+      display: flex; align-items: stretch;
+      gap: 10px; padding: 24px 0; cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .article-row:hover { background: rgba(0,0,0,0.015); margin: 0 -24px; padding: 24px; }
+    .article-content {
+      display: flex; flex-direction: column; gap: 16px;
+      flex: 1;
+    }
+    .article-heading {
+      font-family: var(--font-heading); font-weight: 800;
+      font-size: var(--h5-size); line-height: var(--h5-lh);
+      color: var(--text-primary);
+    }
+    .article-desc {
+      font-family: var(--font-body); font-weight: 300;
+      font-size: var(--body-md); line-height: var(--body-md-lh);
+      color: #616161;
+    }
+    .article-arrow-wrap {
+      display: flex; align-items: center;
+      padding: 0 40px; flex-shrink: 0; align-self: center;
+    }
+    .article-arrow {
+      display: flex; align-items: center; justify-content: center;
+      width: 24px; height: 24px; flex-shrink: 0;
+      transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+    }
+    .article-row:hover .article-arrow { transform: translateX(6px); }
+    .article-divider {
+      height: 1px; background: var(--neutral-300);
+    }
+
+    /* ─── TEAM ─────────────────────────────────────────────────── */
+    .team-section {
+      padding: var(--py-section) var(--px);
+    }
+    .team-inner {
+      max-width: 1536px; margin: 0 auto;
+      display: flex; flex-direction: column; gap: 64px;
+    }
+    .team-header {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      padding-bottom: 33px;
+      border-bottom: 1px solid rgba(198,198,198,0.2);
+    }
+    .team-heading {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--h5-size); line-height: var(--h5-lh);
+      color: var(--text-primary);
+    }
+    .team-all-link {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--btn-sm); letter-spacing: var(--btn-sm-ls);
+      text-transform: uppercase; color: #5f5e5e;
+      transition: color 0.2s;
+    }
+    .team-all-link:hover { color: var(--text-primary); }
+    .team-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px;
+    }
+    .team-card { display: flex; flex-direction: column; gap: 20px; }
+    .team-photo {
+      overflow: hidden; position: relative;
+      width: 100%; aspect-ratio: 4/5;
+    }
+    .team-photo img {
+      width: 100%; height: 100%; object-fit: cover;
+      object-position: center top;
+      filter: saturate(0);
+      transition: filter 0.5s ease, transform 0.6s cubic-bezier(0.16,1,0.3,1);
+    }
+    .team-photo::after {
+      content: ''; position: absolute; inset: 0;
+      background: white; mix-blend-mode: saturation;
+      pointer-events: none; transition: opacity 0.5s ease;
+    }
+    .team-card:hover .team-photo img { filter: saturate(1); transform: scale(1.03); }
+    .team-card:hover .team-photo::after { opacity: 0; }
+    .team-info { display: flex; flex-direction: column; gap: 6px; }
+    .team-role {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--btn-sm); letter-spacing: var(--btn-sm-ls);
+      text-transform: uppercase; color: var(--text-muted);
+    }
+    .team-name {
+      font-family: var(--font-body); font-weight: 600;
+      font-size: var(--body-lg); line-height: var(--body-lg-lh);
+      color: var(--text-primary); text-transform: uppercase;
+    }
+
+    /* ─── CTA ──────────────────────────────────────────────────── */
+    .cta-section {
+      background: var(--neutral-black);
+      padding: var(--py-section) var(--px);
+    }
+    .cta-inner {
+      max-width: 1536px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .cta-heading {
+      font-family: var(--font-heading); font-weight: 800;
+      font-size: var(--h2-size); line-height: var(--h2-lh);
+      text-transform: uppercase; color: var(--cream);
+    }
+    .cta-sub {
+      font-family: var(--font-heading); font-weight: 400;
+      font-size: var(--h6-size); letter-spacing: var(--h6-ls);
+      text-transform: uppercase; color: var(--cream);
+      opacity: 0.6; margin-top: 24px;
+    }
+    .cta-right { display: flex; flex-direction: column; gap: 16px; }
+    .btn-primary {
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px 90px; background: var(--cream); color: var(--neutral-black);
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--btn-lg); letter-spacing: var(--btn-lg-ls);
+      text-transform: uppercase; cursor: pointer;
+      transition: background 0.2s ease; white-space: nowrap;
+    }
+    .btn-primary:hover { background: white; }
+    .btn-secondary {
+      display: flex; align-items: center; justify-content: center;
+      padding: 25px 65px; border: 1px solid rgba(229,226,225,0.2);
+      color: var(--cream);
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--btn-lg); letter-spacing: var(--btn-lg-ls);
+      text-transform: uppercase; cursor: pointer;
+      transition: border-color 0.2s ease; white-space: nowrap;
+    }
+    .btn-secondary:hover { border-color: rgba(229,226,225,0.6); }
+
+    /* ─── FOOTER ───────────────────────────────────────────────── */
+    .footer { background: var(--neutral-white); }
+    .footer-inner {
+      display: grid; grid-template-columns: repeat(4,1fr);
+      gap: 48px; padding: 96px var(--px);
+      max-width: 1536px; margin: 0 auto;
+    }
+    .footer-logo {
+      font-family: var(--font-body); font-weight: 800;
+      font-size: 20px; text-transform: uppercase;
+      color: var(--neutral-black); margin-bottom: 32px;
+    }
+    .footer-tagline {
+      font-family: var(--font-heading); font-weight: 400;
+      font-size: 10px; letter-spacing: 1.6px;
+      text-transform: uppercase; color: var(--neutral-black); line-height: 1.625;
+    }
+    .footer-col-title {
+      font-family: var(--font-body); font-weight: 600;
+      font-size: 10px; letter-spacing: 3.2px;
+      text-transform: uppercase; color: var(--neutral-black);
+      opacity: 0.4; margin-bottom: 24px; display: block;
+    }
+    .footer-link {
+      display: block;
+      font-family: var(--font-heading); font-weight: 400;
+      font-size: 10px; letter-spacing: 1.6px;
+      text-transform: uppercase; color: var(--text-soft);
+      padding: 6.5px 0 2.5px; transition: color 0.2s;
+    }
+    .footer-link:hover { color: var(--text-primary); }
+    .footer-newsletter-row {
+      display: flex; align-items: flex-end;
+      border-bottom: 1px solid rgba(0,0,0,0.2);
+      padding-bottom: 9px; margin-bottom: 24px;
+    }
+    .footer-newsletter-input {
+      flex: 1; background: none; border: none; outline: none;
+      font-family: var(--font-body); font-weight: 600;
+      font-size: 10px; letter-spacing: 1px;
+      text-transform: uppercase; color: #9ca3af; padding: 14px 12px;
+    }
+    .footer-newsletter-btn {
+      background: none; border: none; cursor: pointer;
+      font-family: var(--font-body); font-weight: 600;
+      font-size: 10px; color: var(--neutral-black);
+      padding: 12px 0 13px; text-transform: uppercase;
+      transition: opacity 0.2s;
+    }
+    .footer-newsletter-btn:hover { opacity: 0.6; }
+    .footer-copy {
+      font-family: var(--font-heading); font-weight: 400;
+      font-size: 10px; letter-spacing: 1.6px;
+      text-transform: uppercase; color: var(--text-faint);
+      line-height: 1.5; padding-top: 24px;
+    }
+
+    /* ─── RESPONSIVE ───────────────────────────────────────────── */
+    @media (max-width: 1200px) {
+      .articles-outer { padding: 0 var(--px); }
+    }
+    @media (max-width: 1024px) {
+      :root { --px: 32px; --py-section: 80px; --h2-size: 56px; --h2-lh: 56px; }
+      .hero-section { padding: 60px var(--px); }
+      .hero-image { flex: 0 0 260px; height: 250px; }
+      .hero-heading { font-size: 52px; line-height: 52px; }
+      .team-grid { grid-template-columns: repeat(2,1fr); }
+      .cta-inner { flex-direction: column; align-items: flex-start; gap: 48px; }
+      .cta-right { width: 100%; }
+      .btn-primary, .btn-secondary { width: 100%; padding: 20px 24px; }
+    }
+    @media (max-width: 768px) {
+      :root { --px: 20px; --py-section: 60px; }
+      .nav-links { display: none; }
+      .nav-inner { padding: 20px var(--px); }
+      .burger { display: flex; }
+      .mobile-menu { display: flex; }
+      .hero-inner { flex-direction: column; gap: 32px; }
+      .hero-image { flex: none; width: 100%; height: 260px; }
+      .hero-heading { font-size: 40px; line-height: 40px; }
+      .article-arrow-wrap { padding: 0 16px; }
+      .footer-inner { grid-template-columns: 1fr; gap: 32px; padding: 40px var(--px); }
+    }
+    @media (max-width: 480px) {
+      .team-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ──────────────────────────────────────────────────── -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">MONOLITH</a>
+    <div class="nav-links">
+      <a href="search-results.html" class="nav-link" style="padding-left:0;">LISTINGS</a>
+      <a href="about.html" class="nav-link">ABOUT</a>
+      <a href="editorial.html" class="nav-link active">EDITORIAL</a>
+      <a href="contact.html" class="nav-link">CONTACT</a>
+    </div>
+    <div class="nav-right">
+      <a href="contact.html" class="nav-cta">ENQUIRE</a>
+      <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ── MOBILE MENU ───────────────────────────────────────────── -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="search-results.html" class="mobile-menu-link">LISTINGS</a>
+  <a href="about.html" class="mobile-menu-link">ABOUT</a>
+  <a href="editorial.html" class="mobile-menu-link">EDITORIAL</a>
+  <a href="contact.html" class="mobile-menu-link">CONTACT</a>
+  <p class="mobile-menu-footer">ESTABLISHED 2024</p>
+</div>
+
+<div class="divider"></div>
+
+<!-- ── HERO ─────────────────────────────────────────────────── -->
+<section class="hero-section">
+  <a href="editorial-01.html" class="hero-inner" style="text-decoration:none;color:inherit;">
+
+    <div class="hero-image reveal">
+      <img src="images/hero-monolith-house.png" alt="Architectural feature" />
+    </div>
+
+    <div class="hero-text reveal delay-2">
+      <p class="hero-eyebrow">ESTABLISHED 2024</p>
+      <h1 class="hero-heading">The Quiet<br>Architecture of<br>Living Well</h1>
+      <div class="hero-byline">
+        <span class="hero-byline-text">Written by Giles Routledge</span>
+        <span class="hero-byline-divider"></span>
+        <span class="hero-byline-text">3 minutes read</span>
+      </div>
+    </div>
+
+  </a>
+</section>
+
+<!-- ── ARTICLE LIST ──────────────────────────────────────────── -->
+<section class="articles-section">
+  <div class="articles-outer">
+
+    <!-- Article 1 -->
+    <a href="editorial-01.html" class="article-row reveal">
+      <div class="article-content">
+        <h2 class="article-heading">Where Architectural Vision Meets Everyday Extraordinary Living</h2>
+        <p class="article-desc">Discover homes where bold design principles shape the rhythm of daily life. From sunlit atriums to sculptural staircases, every detail is intentional.</p>
+      </div>
+      <div class="article-arrow-wrap">
+        <span class="article-arrow">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M13 6l6 6-6 6"/>
+          </svg>
+        </span>
+      </div>
+    </a>
+    <div class="article-divider reveal"></div>
+
+    <!-- Article 2 -->
+    <a href="editorial-01.html" class="article-row reveal delay-1">
+      <div class="article-content">
+        <h2 class="article-heading">Homes Designed to Outlive Trends, Not Memories</h2>
+        <p class="article-desc">Timeless architecture isn't about fashion — it's about foresight. Explore residences built to feel as relevant in fifty years as they do today.</p>
+      </div>
+      <div class="article-arrow-wrap">
+        <span class="article-arrow">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M13 6l6 6-6 6"/>
+          </svg>
+        </span>
+      </div>
+    </a>
+    <div class="article-divider reveal delay-1"></div>
+
+    <!-- Article 3 -->
+    <a href="editorial-01.html" class="article-row reveal delay-2">
+      <div class="article-content">
+        <h2 class="article-heading">Beyond Square Footage: The Architecture of a Life Well Lived</h2>
+        <p class="article-desc">True luxury isn't measured in metres, but in moments. Step inside homes where proportion, light, and flow elevate the everyday.</p>
+      </div>
+      <div class="article-arrow-wrap">
+        <span class="article-arrow">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M13 6l6 6-6 6"/>
+          </svg>
+        </span>
+      </div>
+    </a>
+    <div class="article-divider reveal delay-2"></div>
+
+    <!-- Article 4 -->
+    <a href="editorial-01.html" class="article-row reveal delay-3">
+      <div class="article-content">
+        <h2 class="article-heading">Sculpted Spaces for Those Who Live Beautifully</h2>
+        <p class="article-desc">For collectors of art, wine, and quiet mornings — these homes are canvases. Each room is composed like a gallery, lived in like a sanctuary.</p>
+      </div>
+      <div class="article-arrow-wrap">
+        <span class="article-arrow">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M13 6l6 6-6 6"/>
+          </svg>
+        </span>
+      </div>
+    </a>
+    <div class="article-divider reveal delay-3"></div>
+
+    <!-- Article 5 -->
+    <a href="editorial-01.html" class="article-row reveal delay-4">
+      <div class="article-content">
+        <h2 class="article-heading">Light, Line, and Legacy: Residences With Intention</h2>
+        <p class="article-desc">Great architecture begins with a single idea and ends with a feeling. Meet the homes where every beam, window, and threshold tells a story.</p>
+      </div>
+      <div class="article-arrow-wrap">
+        <span class="article-arrow">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M13 6l6 6-6 6"/>
+          </svg>
+        </span>
+      </div>
+    </a>
+    <div class="article-divider reveal delay-4"></div>
+
+    <!-- Article 6 -->
+    <a href="editorial-01.html" class="article-row reveal delay-5">
+      <div class="article-content">
+        <h2 class="article-heading">The Quiet Luxury of Homes That Understand You</h2>
+        <p class="article-desc">No fanfare, no excess — just considered craftsmanship and spaces that breathe. Welcome to residences designed around how you actually want to live.</p>
+      </div>
+      <div class="article-arrow-wrap">
+        <span class="article-arrow">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M13 6l6 6-6 6"/>
+          </svg>
+        </span>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- ── TEAM ──────────────────────────────────────────────────── -->
+<section class="team-section">
+  <div class="team-inner">
+
+    <div class="team-header reveal">
+      <h2 class="team-heading">THE VISIONARIES</h2>
+      <a href="about.html" class="team-all-link">ALL ARCHITECTS</a>
+    </div>
+
+    <div class="team-grid">
+      <div class="team-card reveal delay-1">
+        <div class="team-photo">
+          <img src="images/team-julian-vance.png" alt="Julian Vance" />
+        </div>
+        <div class="team-info">
+          <p class="team-role">PRINCIPAL ARCHITECT</p>
+          <p class="team-name">JULIAN VANCE</p>
+        </div>
+      </div>
+      <div class="team-card reveal delay-2">
+        <div class="team-photo">
+          <img src="images/team-elara-koss.png" alt="Elara Koss" />
+        </div>
+        <div class="team-info">
+          <p class="team-role">CURATION DIRECTOR</p>
+          <p class="team-name">ELARA KOSS</p>
+        </div>
+      </div>
+      <div class="team-card reveal delay-3">
+        <div class="team-photo">
+          <img src="images/team-marcia-thorne.png" alt="Marcus Thorne" />
+        </div>
+        <div class="team-info">
+          <p class="team-role">ESTATE STRATEGIST</p>
+          <p class="team-name">MARCUS THORNE</p>
+        </div>
+      </div>
+      <div class="team-card reveal delay-4">
+        <div class="team-photo">
+          <img src="images/team-anna-reid.png" alt="Anna Reid" />
+        </div>
+        <div class="team-info">
+          <p class="team-role">CLIENT LIAISON</p>
+          <p class="team-name">ANNA REID</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── CTA ───────────────────────────────────────────────────── -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <div>
+      <h2 class="cta-heading reveal">BUILD YOUR<br>PRIVATE GALLERY.</h2>
+      <p class="cta-sub reveal delay-1">EXCLUSIVE ADVISORY SERVICES AVAILABLE UPON REQUEST.</p>
+    </div>
+    <div class="cta-right reveal delay-2">
+      <a href="contact.html" class="btn-primary">START ENQUIRY</a>
+      <a href="#" class="btn-secondary">DOWNLOAD DOSSIER</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ────────────────────────────────────────────────── -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <p class="footer-logo">MONOLITH</p>
+      <p class="footer-tagline">A GLOBAL NETWORK OF ARCHITECTURAL<br>REAL ESTATE SPECIALISTS.<br><br>99 HUDSON STREET,<br>NEW YORK, NY 10013</p>
+    </div>
+    <div>
+      <span class="footer-col-title">CONNECT</span>
+      <a href="#" class="footer-link">INSTAGRAM</a>
+      <a href="#" class="footer-link">LINKEDIN</a>
+    </div>
+    <div>
+      <span class="footer-col-title">LEGAL</span>
+      <a href="#" class="footer-link">PRIVACY</a>
+      <a href="#" class="footer-link">TERMS</a>
+    </div>
+    <div>
+      <span class="footer-col-title">NEWSLETTER</span>
+      <div class="footer-newsletter-row">
+        <input class="footer-newsletter-input" type="email" placeholder="EMAIL ADDRESS" />
+        <button class="footer-newsletter-btn">JOIN</button>
+      </div>
+      <p class="footer-copy">© 2024 MONOLITH. THE BLUEPRINT OF SPACE.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* ── Scroll reveals ───────────────────────────────────────── */
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  revealEls.forEach(el => io.observe(el));
+
+  /* ── Trigger hero immediately ─────────────────────────────── */
+  document.querySelectorAll('.hero-section .reveal').forEach(el => {
+    el.classList.add('visible');
+  });
+
+  /* ── Burger menu ──────────────────────────────────────────── */
+  const burger = document.getElementById('burger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  burger.addEventListener('click', () => {
+    const open = burger.classList.toggle('open');
+    mobileMenu.classList.toggle('open', open);
+    burger.setAttribute('aria-expanded', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+</script>
+</body>
+</html>

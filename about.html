@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — MONOLITH</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;700;800&family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="images/favicon.svg" />
+  <link rel="shortcut icon" href="images/favicon.svg" />
+
+  <style>
+    /* ─── DESIGN TOKENS ────────────────────────────────────────── */
+    :root {
+      --font-heading: 'Manrope', sans-serif;
+      --font-body:    'Inter', sans-serif;
+
+      --bg:           #ffffff;
+      --bg-tonal:     #f3f3f3;
+      --text-primary: #1a1c1c;
+      --text-900:     #181818;
+      --text-body:    #474747;
+      --text-muted:   #9e9e9e;
+      --text-faint:   #6b7280;
+      --text-soft:    #4b5563;
+      --neutral-300:  #dcdcdc;
+      --neutral-white:#ffffff;
+      --neutral-black:#000000;
+      --cream:        #e5e2e1;
+      --divider:      #d9d9d9;
+
+      --h1-size: 100px; --h1-lh: 0.88;
+      --h2-size: 72px;  --h2-lh: 72px;
+      --h5-size: 24px;  --h5-lh: 28px;
+      --h6-size: 10px;  --h6-ls: 3.6px;
+      --body-lg: 18px;  --body-lg-lh: 26px;
+      --body-md: 16px;  --body-md-lh: 28px;
+      --btn-sm:  11px;  --btn-sm-ls: 1.1px;
+      --btn-lg:  14px;  --btn-lg-ls: 3.2px;
+
+      --px: 48px;
+      --py-section: 128px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text-primary);
+      overflow-x: hidden;
+    }
+    img  { display: block; max-width: 100%; }
+    a    { text-decoration: none; color: inherit; }
+
+    /* ─── SCROLL REVEALS ───────────────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.75s cubic-bezier(0.16,1,0.3,1),
+                  transform 0.75s cubic-bezier(0.16,1,0.3,1);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-left {
+      opacity: 0; transform: translateX(-24px);
+      transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1),
+                  transform 0.9s cubic-bezier(0.16,1,0.3,1);
+    }
+    .reveal-left.visible { opacity: 1; transform: translateX(0); }
+    .delay-1 { transition-delay: 0.08s; }
+    .delay-2 { transition-delay: 0.16s; }
+    .delay-3 { transition-delay: 0.24s; }
+    .delay-4 { transition-delay: 0.32s; }
+    .delay-5 { transition-delay: 0.40s; }
+    .delay-6 { transition-delay: 0.48s; }
+
+    /* ─── NAV ──────────────────────────────────────────────────── */
+    .nav {
+      position: sticky; top: 0; z-index: 200;
+      background: #ffffff;
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      width: 100%; transition: background 0.3s ease;
+    }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 32px var(--px); max-width: 1536px; margin: 0 auto;
+    }
+    .nav-logo {
+      font-family: var(--font-body); font-weight: 800;
+      font-size: 24px; letter-spacing: -1.2px;
+      text-transform: uppercase; color: var(--neutral-black);
+    }
+    .nav-links { display: flex; align-items: center; }
+    .nav-link {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--btn-sm); letter-spacing: var(--btn-sm-ls);
+      text-transform: uppercase; color: var(--text-faint);
+      padding-left: 48px; position: relative;
+      transition: color 0.2s ease;
+    }
+    .nav-link::after {
+      content: ''; position: absolute;
+      bottom: -2px; left: 48px; right: 0; height: 1px;
+      background: var(--neutral-black);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+    }
+    .nav-link:hover { color: var(--neutral-black); }
+    .nav-link:hover::after { transform: scaleX(1); }
+    .nav-link.active {
+      color: var(--neutral-black);
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 5px;
+    }
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+    .nav-cta {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--btn-sm); letter-spacing: var(--btn-sm-ls);
+      text-transform: uppercase; color: var(--neutral-black);
+      border: 1px solid var(--neutral-black); padding: 16px 32px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .nav-cta:hover { background: var(--neutral-black); color: var(--neutral-white); }
+    .burger {
+      display: none; flex-direction: column;
+      justify-content: center; gap: 5px;
+      background: none; border: none;
+      padding: 4px; width: 32px; height: 32px;
+      cursor: pointer; flex-shrink: 0;
+    }
+    .burger span {
+      display: block; height: 1.5px;
+      background: var(--neutral-black);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .burger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .burger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .burger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    /* ─── MOBILE MENU ──────────────────────────────────────────── */
+    .mobile-menu {
+      display: none; position: fixed; inset: 0;
+      background: var(--bg); z-index: 199;
+      flex-direction: column; justify-content: center;
+      align-items: flex-start; padding: 96px 24px 48px; gap: 8px;
+      opacity: 0; pointer-events: none; transition: opacity 0.35s ease;
+    }
+    .mobile-menu.open { opacity: 1; pointer-events: all; }
+    .mobile-menu-link {
+      font-family: var(--font-heading); font-weight: 800;
+      font-size: 36px; letter-spacing: -1px;
+      text-transform: uppercase; color: var(--text-primary);
+      padding: 12px 0; border-bottom: 1px solid var(--neutral-300);
+      width: 100%; display: block;
+    }
+    .mobile-menu-footer {
+      margin-top: auto;
+      font-family: var(--font-heading); font-weight: 400;
+      font-size: var(--h6-size); letter-spacing: var(--h6-ls);
+      text-transform: uppercase; color: var(--text-muted);
+    }
+
+    /* ─── DIVIDER ──────────────────────────────────────────────── */
+    .divider { height: 1px; background: var(--neutral-300); margin: 0 var(--px); }
+
+    /* ─── HERO ─────────────────────────────────────────────────── */
+    .hero {
+      max-width: 1536px; margin: 0 auto;
+      padding: 96px var(--px) 80px;
+      display: flex; align-items: flex-end; gap: 48px;
+    }
+    .hero-left {
+      flex: 0 0 710px;
+      display: flex; flex-direction: column; gap: 22px;
+      padding-bottom: 48px;
+    }
+    .hero-eyebrow {
+      font-family: var(--font-heading); font-weight: 400;
+      font-size: var(--h6-size); letter-spacing: var(--h6-ls);
+      text-transform: uppercase; color: var(--text-muted);
+    }
+    .hero-heading {
+      font-family: var(--font-heading); font-weight: 800;
+      font-size: var(--h1-size); line-height: var(--h1-lh);
+      letter-spacing: -5.6px; text-transform: uppercase;
+      color: var(--text-primary);
+    }
+    .hero-word { display: inline-block; overflow: hidden; line-height: 1; }
+    .hero-word span {
+      display: inline-block; transform: translateY(110%);
+      transition: transform 0.9s cubic-bezier(0.16,1,0.3,1);
+    }
+    .hero-heading.visible .hero-word span { transform: translateY(0); }
+    .hero-word:nth-child(1) span { transition-delay: 0s; }
+    .hero-word:nth-child(3) span { transition-delay: 0.1s; }
+    .hero-word:nth-child(5) span { transition-delay: 0.2s; }
+    .hero-right {
+      flex: 1; border-left: 1px solid var(--neutral-300);
+      display: flex; flex-direction: column;
+    }
+    .hero-body {
+      font-family: var(--font-body); font-size: var(--body-lg);
+      font-weight: 300;
+      line-height: var(--body-lg-lh); color: var(--text-body);
+      padding: 0 48px 48px; border-bottom: 1px solid var(--neutral-300);
+    }
+    .hero-cta {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 28px 48px; cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .hero-cta:hover { background: rgba(0,0,0,0.02); }
+    .hero-cta-label {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--btn-sm); letter-spacing: var(--btn-sm-ls);
+      text-transform: uppercase; color: var(--text-primary);
+    }
+    .hero-cta-arrow {
+      transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+    }
+    .hero-cta:hover .hero-cta-arrow { transform: translateX(6px); }
+
+    /* ─── ABOUT SECTION ────────────────────────────────────────── */
+    .about-section {
+      border-top: 1px solid var(--neutral-300);
+      padding: var(--py-section) var(--px);
+    }
+    .about-inner {
+      max-width: 1536px; margin: 0 auto;
+    }
+    .about-label {
+      font-family: var(--font-heading); font-weight: 400;
+      font-size: var(--h6-size); letter-spacing: var(--h6-ls);
+      text-transform: uppercase; color: var(--text-muted);
+      padding-top: 6px;
+    }
+    .about-content { display: flex; flex-direction: column; gap: 32px; max-width: 760px; margin: 0 auto; }
+    .about-heading {
+      font-family: var(--font-heading); font-weight: 800;
+      font-size: 56px; line-height: 0.92; letter-spacing: -3px;
+      text-transform: uppercase; color: var(--text-primary);
+    }
+    .about-body {
+      display: flex; flex-direction: column; gap: 20px;
+      max-width: 640px;
+    }
+    .about-body p {
+      font-family: var(--font-body); font-weight: 300;
+      font-size: var(--body-md); line-height: var(--body-md-lh);
+      color: #616161;
+    }
+
+    /* ─── HISTORY SECTION ──────────────────────────────────────── */
+    .history-section {
+      background: var(--text-primary);
+      padding: var(--py-section) var(--px);
+    }
+    .history-inner {
+      max-width: 1536px; margin: 0 auto;
+      display: flex; flex-direction: column; gap: 80px;
+    }
+    .history-header {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      padding-bottom: 40px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .history-title {
+      font-family: var(--font-heading); font-weight: 800;
+      font-size: var(--h2-size); line-height: var(--h2-lh);
+      letter-spacing: -3px; text-transform: uppercase; color: var(--cream);
+    }
+    .history-eyebrow {
+      font-family: var(--font-heading); font-weight: 400;
+      font-size: var(--h6-size); letter-spacing: var(--h6-ls);
+      text-transform: uppercase; color: rgba(229,226,225,0.4);
+    }
+    .history-timeline {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+    .history-item {
+      padding: 40px 40px 40px 0;
+      border-right: 1px solid rgba(255,255,255,0.1);
+      display: flex; flex-direction: column; gap: 20px;
+    }
+    .history-item:last-child { border-right: none; padding-right: 0; }
+    .history-item:not(:first-child) { padding-left: 40px; }
+    .history-year {
+      font-family: var(--font-heading); font-weight: 800;
+      font-size: 48px; line-height: 1; letter-spacing: -3px;
+      color: var(--cream); opacity: 0.2;
+    }
+    .history-item-heading {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--h5-size); line-height: var(--h5-lh);
+      color: var(--cream);
+    }
+    .history-item-body {
+      font-family: var(--font-body); font-weight: 300;
+      font-size: var(--body-md); line-height: var(--body-md-lh);
+      color: rgba(229,226,225,0.55);
+    }
+
+    /* ─── VALUES SECTION ───────────────────────────────────────── */
+    .values-section {
+      padding: var(--py-section) var(--px);
+      border-bottom: 1px solid var(--neutral-300);
+    }
+    .values-inner {
+      max-width: 1536px; margin: 0 auto;
+      display: grid; grid-template-columns: 320px 1fr; gap: 96px;
+      align-items: start;
+    }
+    .values-left { display: flex; flex-direction: column; gap: 24px; }
+    .values-label {
+      font-family: var(--font-heading); font-weight: 400;
+      font-size: var(--h6-size); letter-spacing: var(--h6-ls);
+      text-transform: uppercase; color: var(--text-muted);
+    }
+    .values-heading {
+      font-family: var(--font-heading); font-weight: 800;
+      font-size: 56px; line-height: 0.92; letter-spacing: -3px;
+      text-transform: uppercase; color: var(--text-primary);
+    }
+    .values-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 0;
+    }
+    .values-item {
+      padding: 40px;
+      border-left: 1px solid var(--neutral-300);
+      border-bottom: 1px solid var(--neutral-300);
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    .values-item:nth-child(3),
+    .values-item:nth-child(4) { border-bottom: none; }
+    .values-item-label {
+      font-family: var(--font-heading); font-weight: 400;
+      font-size: var(--h6-size); letter-spacing: var(--h6-ls);
+      text-transform: uppercase; color: var(--text-muted);
+    }
+    .values-item-heading {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--h5-size); line-height: var(--h5-lh);
+      color: var(--text-primary);
+    }
+    .values-item-body {
+      font-family: var(--font-body); font-weight: 300;
+      font-size: var(--body-md); line-height: var(--body-md-lh);
+      color: #616161;
+    }
+
+    /* ─── TEAM ─────────────────────────────────────────────────── */
+    .team-section {
+      padding: var(--py-section) var(--px);
+    }
+    .team-inner {
+      max-width: 1536px; margin: 0 auto;
+      display: flex; flex-direction: column; gap: 64px;
+    }
+    .team-header {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      padding-bottom: 33px;
+      border-bottom: 1px solid rgba(198,198,198,0.2);
+    }
+    .team-heading {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--h5-size); line-height: var(--h5-lh);
+      color: var(--text-primary);
+    }
+    .team-all-link {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--btn-sm); letter-spacing: var(--btn-sm-ls);
+      text-transform: uppercase; color: #5f5e5e;
+      transition: color 0.2s;
+    }
+    .team-all-link:hover { color: var(--text-primary); }
+    .team-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px;
+    }
+    .team-card { display: flex; flex-direction: column; gap: 20px; }
+    .team-photo {
+      overflow: hidden; position: relative;
+      height: 340px;
+    }
+    .team-photo img {
+      width: 100%; height: 100%; object-fit: cover;
+      object-position: center top;
+      filter: saturate(0);
+      transition: filter 0.5s ease, transform 0.6s cubic-bezier(0.16,1,0.3,1);
+    }
+    .team-photo::after {
+      content: ''; position: absolute; inset: 0;
+      background: white; mix-blend-mode: saturation;
+      pointer-events: none; transition: opacity 0.5s ease;
+    }
+    .team-card:hover .team-photo img { filter: saturate(1); transform: scale(1.03); }
+    .team-card:hover .team-photo::after { opacity: 0; }
+    .team-info { display: flex; flex-direction: column; gap: 6px; }
+    .team-role {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--btn-sm); letter-spacing: var(--btn-sm-ls);
+      text-transform: uppercase; color: var(--text-muted);
+    }
+    .team-name {
+      font-family: var(--font-body); font-weight: 600;
+      font-size: var(--body-lg); line-height: var(--body-lg-lh);
+      color: var(--text-primary);
+    }
+    .team-bio {
+      font-family: var(--font-body); font-weight: 300;
+      font-size: 13px; line-height: 20px;
+      color: #616161; margin-top: 2px;
+    }
+
+    /* ─── CTA ──────────────────────────────────────────────────── */
+    .cta-section {
+      background: var(--neutral-black);
+      padding: var(--py-section) var(--px);
+    }
+    .cta-inner {
+      max-width: 1536px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .cta-heading {
+      font-family: var(--font-heading); font-weight: 800;
+      font-size: var(--h2-size); line-height: var(--h2-lh);
+      color: var(--cream);
+      opacity: 0; transform: translateY(24px);
+      transition: opacity 0.75s cubic-bezier(0.16,1,0.3,1),
+                  transform 0.75s cubic-bezier(0.16,1,0.3,1);
+    }
+    .cta-heading.visible { opacity: 1; transform: translateY(0); }
+    .cta-sub {
+      font-family: var(--font-heading); font-weight: 400;
+      font-size: var(--h6-size); letter-spacing: var(--h6-ls);
+      text-transform: uppercase; color: var(--cream);
+      opacity: 0.6; margin-top: 24px;
+    }
+    .cta-right { display: flex; flex-direction: column; gap: 16px; }
+    .btn-primary {
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px 72px; background: var(--cream); color: var(--neutral-black);
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--btn-lg); letter-spacing: var(--btn-lg-ls);
+      text-transform: uppercase; cursor: pointer;
+      transition: background 0.2s ease; white-space: nowrap;
+    }
+    .btn-primary:hover { background: white; }
+    .btn-secondary {
+      display: flex; align-items: center; justify-content: center;
+      padding: 25px 52px; border: 1px solid rgba(229,226,225,0.2);
+      color: var(--cream);
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--btn-lg); letter-spacing: var(--btn-lg-ls);
+      text-transform: uppercase; cursor: pointer;
+      transition: border-color 0.2s ease; white-space: nowrap;
+    }
+    .btn-secondary:hover { border-color: rgba(229,226,225,0.6); }
+
+    /* ─── FOOTER ───────────────────────────────────────────────── */
+    .footer { background: var(--neutral-white); }
+    .footer-inner {
+      display: grid; grid-template-columns: repeat(4,1fr);
+      gap: 48px; padding: 96px var(--px);
+      max-width: 1536px; margin: 0 auto;
+    }
+    .footer-logo {
+      font-family: var(--font-body); font-weight: 800;
+      font-size: 20px; text-transform: uppercase;
+      color: var(--neutral-black); margin-bottom: 32px;
+    }
+    .footer-tagline {
+      font-family: var(--font-heading); font-weight: 400;
+      font-size: 10px; letter-spacing: 1.6px;
+      text-transform: uppercase; color: var(--neutral-black); line-height: 1.625;
+    }
+    .footer-col-title {
+      font-family: var(--font-body); font-weight: 600;
+      font-size: 10px; letter-spacing: 3.2px;
+      text-transform: uppercase; color: var(--neutral-black);
+      opacity: 0.4; margin-bottom: 24px; display: block;
+    }
+    .footer-link {
+      display: block;
+      font-family: var(--font-heading); font-weight: 400;
+      font-size: 10px; letter-spacing: 1.6px;
+      text-transform: uppercase; color: var(--text-soft);
+      padding: 6.5px 0 2.5px; transition: color 0.2s;
+    }
+    .footer-link:hover { color: var(--text-primary); }
+    .footer-newsletter-row {
+      display: flex; align-items: flex-end;
+      border-bottom: 1px solid rgba(0,0,0,0.2);
+      padding-bottom: 9px; margin-bottom: 24px;
+    }
+    .footer-newsletter-input {
+      flex: 1; background: none; border: none; outline: none;
+      font-family: var(--font-body); font-weight: 600;
+      font-size: 10px; letter-spacing: 1px;
+      text-transform: uppercase; color: #9ca3af; padding: 14px 12px;
+    }
+    .footer-newsletter-btn {
+      background: none; border: none; cursor: pointer;
+      font-family: var(--font-body); font-weight: 600;
+      font-size: 10px; color: var(--neutral-black);
+      padding: 12px 0 13px; text-transform: uppercase;
+      transition: opacity 0.2s;
+    }
+    .footer-newsletter-btn:hover { opacity: 0.6; }
+    .footer-copy {
+      font-family: var(--font-heading); font-weight: 400;
+      font-size: 10px; letter-spacing: 1.6px;
+      text-transform: uppercase; color: var(--text-faint);
+      line-height: 1.5; padding-top: 24px;
+    }
+
+    /* ─── RESPONSIVE ───────────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      :root { --px: 32px; --py-section: 80px; --h1-size: 72px; --h2-size: 56px; }
+      .hero { flex-direction: column; align-items: flex-start; gap: 32px; }
+      .hero-left { flex: none; width: 100%; padding-bottom: 0; }
+      .hero-right { border-left: none; border-top: 1px solid var(--neutral-300); width: 100%; }
+      .hero-body { padding: 32px 0 32px; }
+      .hero-cta { padding: 28px 0; }
+      .values-inner { grid-template-columns: 1fr; gap: 40px; }
+      .history-timeline { grid-template-columns: repeat(2,1fr); }
+      .history-item:nth-child(2) { border-right: none; }
+      .history-item:nth-child(3) { border-right: 1px solid rgba(255,255,255,0.1); }
+      .team-grid { grid-template-columns: repeat(2,1fr); }
+      .cta-inner { flex-direction: column; align-items: flex-start; gap: 48px; }
+      .cta-right { width: 100%; }
+      .btn-primary, .btn-secondary { width: 100%; padding: 20px 24px; }
+    }
+    @media (max-width: 768px) {
+      :root { --px: 20px; --py-section: 60px; --h1-size: 52px; --h2-size: 40px; }
+      .nav-links { display: none; }
+      .burger { display: flex; }
+      .mobile-menu { display: flex; }
+      .nav-inner { padding: 20px var(--px); }
+      .hero-heading { letter-spacing: -2px; }
+      .about-heading, .values-heading { font-size: 40px; }
+      .history-timeline { grid-template-columns: 1fr; }
+      .history-item { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 32px 0; }
+      .history-item:last-child { border-bottom: none; }
+      .history-item:not(:first-child) { padding-left: 0; }
+      .values-grid { grid-template-columns: 1fr; }
+      .values-item:nth-child(3) { border-bottom: 1px solid var(--neutral-300); }
+      .values-item:nth-child(4) { border-bottom: none; }
+      .team-grid { grid-template-columns: repeat(2,1fr); }
+      .footer-inner { grid-template-columns: 1fr; gap: 32px; padding: 40px var(--px); }
+    }
+    @media (max-width: 480px) {
+      :root { --h1-size: 40px; }
+      .team-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ──────────────────────────────────────────────────── -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">MONOLITH</a>
+    <div class="nav-links">
+      <a href="search-results.html" class="nav-link" style="padding-left:0;">LISTINGS</a>
+      <a href="about.html" class="nav-link active">ABOUT</a>
+      <a href="editorial.html" class="nav-link">EDITORIAL</a>
+      <a href="contact.html" class="nav-link">CONTACT</a>
+    </div>
+    <div class="nav-right">
+      <a href="contact.html" class="nav-cta">ENQUIRE</a>
+      <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ── MOBILE MENU ───────────────────────────────────────────── -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="search-results.html" class="mobile-menu-link">LISTINGS</a>
+  <a href="about.html" class="mobile-menu-link">ABOUT</a>
+  <a href="editorial.html" class="mobile-menu-link">EDITORIAL</a>
+  <a href="contact.html" class="mobile-menu-link">CONTACT</a>
+  <p class="mobile-menu-footer">ESTABLISHED 2024</p>
+</div>
+
+<div class="divider"></div>
+
+<!-- ── HERO ─────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-left reveal">
+    <p class="hero-eyebrow">ESTABLISHED 2024</p>
+    <h1 class="hero-heading" id="heroHeading">
+      <span class="hero-word"><span>NOT</span></span><br>
+      <span class="hero-word"><span>JUST</span></span><br>
+      <span class="hero-word"><span>PROPERTY.</span></span>
+    </h1>
+  </div>
+  <div class="hero-right reveal delay-2">
+    <p class="hero-body">MONOLITH was founded on a single conviction: that architecture is the most permanent form of cultural expression. We do not simply sell homes. We identify, curate, and place works of built art with people who understand what they represent.</p>
+    <a href="#about" class="hero-cta">
+      <span class="hero-cta-label">OUR STORY</span>
+      <svg class="hero-cta-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M3 8h10M9 4l4 4-4 4" stroke="#1a1c1c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </div>
+</section>
+
+<!-- ── ABOUT SECTION ────────────────────────────────────────── -->
+<section class="about-section" id="about">
+  <div class="about-inner">
+    <div class="about-content">
+      <p class="about-label reveal">ABOUT US</p>
+      <h2 class="about-heading reveal">ARCHITECTURE<br>AS A CALLING.</h2>
+      <div class="about-body reveal delay-1">
+        <p>MONOLITH exists at the intersection of architecture and acquisition. We are a curated platform for extraordinary residential property — spaces defined not by square footage or postcode, but by the quality of thought behind their construction.</p>
+        <p>Our approach is editorial rather than transactional. Every property in our portfolio has been assessed by an architectural committee. We ask not only whether a home is desirable, but whether it deserves to exist — whether it advances the conversation around how people should inhabit space.</p>
+        <p>We work with a select group of clients who share this conviction. People who understand that the right home does not merely provide shelter; it shapes perception, deepens experience, and accrues meaning over time. For these clients, we offer access to properties that are rarely, if ever, listed on the open market.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── HISTORY SECTION ──────────────────────────────────────── -->
+<section class="history-section">
+  <div class="history-inner">
+    <div class="history-header reveal">
+      <h2 class="history-title">OUR<br>HISTORY</h2>
+      <p class="history-eyebrow">A CHRONICLE OF CONSIDERED WORK</p>
+    </div>
+    <div class="history-timeline">
+      <div class="history-item reveal delay-1">
+        <p class="history-year">2018</p>
+        <h3 class="history-item-heading">The Founding</h3>
+        <p class="history-item-body">Julian Vance and Elara Koss established MONOLITH in London with a mandate to represent only architecturally significant residential property. The first year saw three acquisitions — each a landmark in its own right.</p>
+      </div>
+      <div class="history-item reveal delay-2">
+        <p class="history-year">2020</p>
+        <h3 class="history-item-heading">European Expansion</h3>
+        <p class="history-item-body">Offices opened in Zurich and Copenhagen, extending the portfolio into the Nordic and Alpine markets. Marcia Thorne joined as Estate Strategist, bringing a decade of investment expertise to the practice.</p>
+      </div>
+      <div class="history-item reveal delay-3">
+        <p class="history-year">2022</p>
+        <h3 class="history-item-heading">The Editorial Launch</h3>
+        <p class="history-item-body">The MONOLITH editorial platform launched, establishing the firm's voice as a critical authority on residential architecture. Readership reached 200,000 within the first year of publication.</p>
+      </div>
+      <div class="history-item reveal delay-4">
+        <p class="history-year">2024</p>
+        <h3 class="history-item-heading">Global Network</h3>
+        <p class="history-item-body">A New York presence was established, completing a transatlantic network spanning twelve cities. The portfolio now represents properties across Europe, North America, and the Asia-Pacific region.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── VALUES SECTION ───────────────────────────────────────── -->
+<section class="values-section">
+  <div class="values-inner">
+    <div class="values-left">
+      <p class="values-label reveal">HOW WE WORK</p>
+      <h2 class="values-heading reveal delay-1">FOUR<br>PRINCIPLES.</h2>
+    </div>
+    <div class="values-grid">
+      <div class="values-item reveal delay-1">
+        <p class="values-item-label">I. CURATION</p>
+        <h3 class="values-item-heading">Rigorous Selection</h3>
+        <p class="values-item-body">Every property we represent is reviewed by our architectural committee. Fewer than one in twelve submissions meets our criteria. This is not exclusivity for its own sake — it is a commitment to quality that our clients depend on.</p>
+      </div>
+      <div class="values-item reveal delay-2">
+        <p class="values-item-label">II. DISCRETION</p>
+        <h3 class="values-item-heading">Private by Default</h3>
+        <p class="values-item-body">Many of our most significant transactions never appear in any public record. We operate on trust, confidentiality, and long-term relationships. Our clients' privacy is not a feature — it is a founding value.</p>
+      </div>
+      <div class="values-item reveal delay-3">
+        <p class="values-item-label">III. PERSPECTIVE</p>
+        <h3 class="values-item-heading">Architectural Authority</h3>
+        <p class="values-item-body">We approach every acquisition with a critical eye shaped by decades of engagement with the built environment. Our team includes architects, historians, and market specialists — people who can articulate why a space matters.</p>
+      </div>
+      <div class="values-item reveal delay-4">
+        <p class="values-item-label">IV. LEGACY</p>
+        <h3 class="values-item-heading">Lasting Value</h3>
+        <p class="values-item-body">The properties we place are not investments in the conventional sense. They are acquisitions of cultural significance. Their value deepens not simply with time, but with understanding — and that is what we help our clients develop.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TEAM ──────────────────────────────────────────────────── -->
+<section class="team-section">
+  <div class="team-inner">
+    <div class="team-header reveal">
+      <h2 class="team-heading">THE VISIONARIES</h2>
+      <a href="#" class="team-all-link">ALL ARCHITECTS</a>
+    </div>
+    <div class="team-grid">
+      <div class="team-card reveal delay-1">
+        <div class="team-photo">
+          <img src="images/team-julian-vance.png" alt="Julian Vance" loading="lazy" />
+        </div>
+        <div class="team-info">
+          <p class="team-role">PRINCIPAL ARCHITECT</p>
+          <p class="team-name">JULIAN VANCE</p>
+          <p class="team-bio">Julian founded MONOLITH after fifteen years in architectural practice across London and Tokyo. His eye for the exceptional is the filter through which every portfolio decision passes.</p>
+        </div>
+      </div>
+      <div class="team-card reveal delay-2">
+        <div class="team-photo">
+          <img src="images/team-elara-koss.png" alt="Elara Koss" loading="lazy" />
+        </div>
+        <div class="team-info">
+          <p class="team-role">CURATION DIRECTOR</p>
+          <p class="team-name">ELARA KOSS</p>
+          <p class="team-bio">Elara oversees the editorial voice and curatorial standards of the firm. A former critic and exhibition curator, she brings a rigorous intellectual framework to the assessment of every property.</p>
+        </div>
+      </div>
+      <div class="team-card reveal delay-3">
+        <div class="team-photo">
+          <img src="images/team-marcia-thorne.png" alt="Marcia Thorne" loading="lazy" />
+        </div>
+        <div class="team-info">
+          <p class="team-role">ESTATE STRATEGIST</p>
+          <p class="team-name">MARCIA THORNE</p>
+          <p class="team-bio">Marcia brings a decade of international investment expertise to the MONOLITH practice. She advises clients on acquisition strategy, portfolio construction, and the long-term stewardship of architectural assets.</p>
+        </div>
+      </div>
+      <div class="team-card reveal delay-4">
+        <div class="team-photo">
+          <img src="images/team-anna-reid.png" alt="Anna Reid" loading="lazy" />
+        </div>
+        <div class="team-info">
+          <p class="team-role">CLIENT LIAISON</p>
+          <p class="team-name">ANNA REID</p>
+          <p class="team-bio">Anna is the first point of contact for new clients and the constant presence throughout every engagement. Her work ensures that the MONOLITH experience is as considered as the properties it represents.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ──────────────────────────────────────────────────── -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <div>
+      <h2 class="cta-heading">BUILD YOUR<br>PRIVATE GALLERY.</h2>
+      <p class="cta-sub reveal delay-1">EXCLUSIVE ADVISORY SERVICES AVAILABLE UPON REQUEST.</p>
+    </div>
+    <div class="cta-right reveal delay-2">
+      <a href="#" class="btn-primary">START ENQUIRY</a>
+      <a href="#" class="btn-secondary">DOWNLOAD DOSSIER</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ────────────────────────────────────────────────── -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="reveal">
+      <p class="footer-logo">MONOLITH</p>
+      <p class="footer-tagline">
+        A GLOBAL NETWORK OF ARCHITECTURAL<br>
+        REAL ESTATE SPECIALISTS.<br><br>
+        99 HUDSON STREET,<br>
+        NEW YORK, NY 10013
+      </p>
+    </div>
+    <div class="reveal delay-1">
+      <span class="footer-col-title">CONNECT</span>
+      <a href="#" class="footer-link">INSTAGRAM</a>
+      <a href="#" class="footer-link">LINKEDIN</a>
+    </div>
+    <div class="reveal delay-2">
+      <span class="footer-col-title">LEGAL</span>
+      <a href="#" class="footer-link">PRIVACY</a>
+      <a href="#" class="footer-link">TERMS</a>
+    </div>
+    <div class="reveal delay-3">
+      <span class="footer-col-title">NEWSLETTER</span>
+      <div class="footer-newsletter-row">
+        <input class="footer-newsletter-input" type="email" placeholder="EMAIL ADDRESS" aria-label="Email address" />
+        <button class="footer-newsletter-btn">JOIN</button>
+      </div>
+      <p class="footer-copy">© 2024 MONOLITH. THE BLUEPRINT<br>OF SPACE.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* ── Scroll reveals ── */
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal, .reveal-left, .cta-heading').forEach(el => io.observe(el));
+
+  /* Trigger hero immediately */
+  setTimeout(() => {
+    const h = document.getElementById('heroHeading');
+    if (h) h.classList.add('visible');
+    document.querySelectorAll('.hero .reveal').forEach(el => el.classList.add('visible'));
+  }, 80);
+
+  /* ── Burger ── */
+  const burger = document.getElementById('burger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  burger.addEventListener('click', () => {
+    const open = burger.classList.toggle('open');
+    mobileMenu.classList.toggle('open', open);
+    burger.setAttribute('aria-expanded', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+  mobileMenu.querySelectorAll('.mobile-menu-link').forEach(l => {
+    l.addEventListener('click', () => {
+      burger.classList.remove('open');
+      mobileMenu.classList.remove('open');
+      burger.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    });
+  });
+</script>
+</body>
+</html>

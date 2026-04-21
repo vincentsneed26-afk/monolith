@@ -16,7 +16,7 @@
       --font-heading: 'Manrope', sans-serif;
       --font-body:    'Inter', sans-serif;
 
-      --bg:           #f9f9f9;
+      --bg:           #ffffff;
       --bg-tonal:     #f3f3f3;
       --text-primary: #1a1c1c;
       --text-900:     #181818;
@@ -72,7 +72,7 @@
     /* ─── NAV ──────────────────────────────────────────────────── */
     .nav {
       position: sticky; top: 0; z-index: 200;
-      background: rgba(249,249,249,0.82);
+      background: #ffffff;
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       width: 100%;
@@ -163,13 +163,19 @@
     .divider { height: 1px; background: var(--neutral-300); margin: 0 var(--px); }
 
     /* ─── FILTER BAR ───────────────────────────────────────────── */
-    .filter-bar {
-      display: flex; align-items: stretch;
-      height: 67px; overflow-x: auto;
-      padding: 0 var(--px);
+    .filter-bar-wrap {
+      width: 100%;
+      overflow-x: auto;
       scrollbar-width: none;
     }
-    .filter-bar::-webkit-scrollbar { display: none; }
+    .filter-bar-wrap::-webkit-scrollbar { display: none; }
+    .filter-bar {
+      display: flex; align-items: stretch;
+      height: 67px;
+      max-width: 1536px;
+      margin: 0 auto;
+      padding: 0 var(--px);
+    }
 
     /* Sale/Rent toggle */
     .filter-toggle {
@@ -194,14 +200,14 @@
       display: flex; align-items: center;
       padding: 0 24px;
       border-right: 1px solid var(--neutral-300);
-      flex-shrink: 0;
+      flex: 1 1 auto;
     }
     .filter-location input {
       font-family: var(--font-heading); font-weight: 700;
       font-size: var(--btn-sm); letter-spacing: 0.8px;
       text-transform: uppercase; color: var(--text-900);
       background: none; border: none; outline: none;
-      width: 160px; min-width: 80px;
+      width: 100%; min-width: 80px;
     }
     .filter-location input::placeholder { color: var(--text-900); }
 
@@ -285,14 +291,19 @@
 
     /* More filters */
     .more-filters {
-      display: flex; align-items: center; justify-content: flex-end;
-      padding: 10px var(--px);
+      width: 100%;
+    }
+    .more-filters-inner {
+      display: flex; justify-content: flex-end;
+      max-width: 1536px; margin: 0 auto;
+      padding: 10px var(--px) 0;
     }
     .more-filters a {
       font-family: var(--font-body); font-weight: 400;
-      font-size: var(--body-md); line-height: var(--body-md-lh);
+      font-size: 14px; line-height: var(--body-md-lh);
       color: var(--text-body); text-decoration: underline;
       text-decoration-color: rgba(71,71,71,0.4);
+      white-space: nowrap;
       transition: color 0.2s ease;
     }
     .more-filters a:hover { color: var(--neutral-black); }
@@ -584,7 +595,7 @@
       .btn-primary, .btn-secondary { width: 100%; padding: 20px 24px; justify-content: center; }
 
       .footer-inner { grid-template-columns: 1fr; gap: 32px; padding: 40px var(--px); }
-      .more-filters { padding: 8px var(--px); }
+      .more-filters-inner { padding: 8px var(--px) 0; }
     }
 
     @media (max-width: 480px) {
@@ -599,13 +610,13 @@
   <div class="nav-inner">
     <a href="index.html" class="nav-logo">MONOLITH</a>
     <div class="nav-links">
-      <a href="#" class="nav-link active" style="padding-left:0;border-bottom:2px solid black;padding-bottom:3px;">LISTINGS</a>
-      <a href="#" class="nav-link">ARCHITECTS</a>
-      <a href="#" class="nav-link">JOURNAL</a>
-      <a href="#" class="nav-link">CONTACT</a>
+      <a href="search-results.html" class="nav-link active" style="padding-left:0;border-bottom:2px solid black;padding-bottom:3px;">LISTINGS</a>
+      <a href="about.html" class="nav-link">ABOUT</a>
+      <a href="editorial.html" class="nav-link">EDITORIAL</a>
+      <a href="contact.html" class="nav-link">CONTACT</a>
     </div>
     <div class="nav-right">
-      <a href="#" class="nav-cta">ENQUIRE</a>
+      <a href="contact.html" class="nav-cta">ENQUIRE</a>
       <button class="burger" id="burgerBtn" aria-label="Open menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
@@ -614,16 +625,17 @@
 </nav>
 
 <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
-  <a href="#" class="mobile-menu-link">LISTINGS</a>
-  <a href="#" class="mobile-menu-link">ARCHITECTS</a>
-  <a href="#" class="mobile-menu-link">JOURNAL</a>
-  <a href="#" class="mobile-menu-link">CONTACT</a>
+  <a href="search-results.html" class="mobile-menu-link">LISTINGS</a>
+  <a href="about.html" class="mobile-menu-link">ABOUT</a>
+  <a href="editorial.html" class="mobile-menu-link">EDITORIAL</a>
+  <a href="contact.html" class="mobile-menu-link">CONTACT</a>
   <p class="mobile-menu-footer">ESTABLISHED 2024</p>
 </div>
 
 <div class="divider"></div>
 
 <!-- ── FILTER BAR ────────────────────────────────────────────── -->
+<div class="filter-bar-wrap">
 <div class="filter-bar" id="filterBar">
 
   <!-- Sale / Rent -->
@@ -707,12 +719,15 @@
     <svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </button>
 </div>
+</div><!-- /.filter-bar-wrap -->
 
 <div class="divider"></div>
 
 <!-- More filters -->
 <div class="more-filters">
-  <a href="#">show more filters</a>
+  <div class="more-filters-inner">
+    <a href="#">show more filters</a>
+  </div>
 </div>
 
 <!-- ── HERO ──────────────────────────────────────────────────── -->
@@ -747,7 +762,7 @@
         <span class="prop-area">Chelsea</span>
       </div>
       <div class="prop-image-wrap">
-        <img src="images/property-chelsea-1.jpg" alt="Cadogan Gardens" loading="lazy" />
+        <img src="images/01.png" alt="Cadogan Gardens" loading="lazy" />
         <span class="prop-view-label">VIEW PROPERTY</span>
       </div>
       <div class="prop-price-block">
@@ -765,7 +780,7 @@
         <span class="prop-area">Chelsea</span>
       </div>
       <div class="prop-image-wrap">
-        <img src="images/property-chelsea-2.jpg" alt="Sloane Square" loading="lazy" />
+        <img src="images/02.png" alt="Sloane Square" loading="lazy" />
         <span class="prop-view-label">VIEW PROPERTY</span>
       </div>
       <div class="prop-price-block">
@@ -783,7 +798,7 @@
         <span class="prop-area">Chelsea</span>
       </div>
       <div class="prop-image-wrap">
-        <img src="images/property-chelsea-3.jpg" alt="Royal Hospital Road" loading="lazy" />
+        <img src="images/03.png" alt="Royal Hospital Road" loading="lazy" />
         <span class="prop-view-label">VIEW PROPERTY</span>
       </div>
       <div class="prop-price-block">
@@ -801,7 +816,7 @@
         <span class="prop-area">Chelsea</span>
       </div>
       <div class="prop-image-wrap">
-        <img src="images/property-chelsea-4.jpg" alt="Flood Street" loading="lazy" />
+        <img src="images/04.png" alt="Flood Street" loading="lazy" />
         <span class="prop-view-label">VIEW PROPERTY</span>
       </div>
       <div class="prop-price-block">
@@ -819,7 +834,7 @@
         <span class="prop-area">Chelsea</span>
       </div>
       <div class="prop-image-wrap">
-        <img src="images/property-chelsea-5.jpg" alt="Cheyne Walk" loading="lazy" />
+        <img src="images/05.png" alt="Cheyne Walk" loading="lazy" />
         <span class="prop-view-label">VIEW PROPERTY</span>
       </div>
       <div class="prop-price-block">
@@ -837,7 +852,7 @@
         <span class="prop-area">Chelsea</span>
       </div>
       <div class="prop-image-wrap">
-        <img src="images/property-chelsea-6.jpg" alt="King's Road" loading="lazy" />
+        <img src="images/06.png" alt="King's Road" loading="lazy" />
         <span class="prop-view-label">VIEW PROPERTY</span>
       </div>
       <div class="prop-price-block">

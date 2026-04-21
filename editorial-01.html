@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Quiet Architecture of Living Well — MONOLITH Editorial</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="images/favicon.svg" />
+  <link rel="shortcut icon" href="images/favicon.svg" />
+
+  <style>
+    /* ─── DESIGN TOKENS ────────────────────────────────────────── */
+    :root {
+      --font-heading: 'Manrope', sans-serif;
+      --font-body:    'Inter', sans-serif;
+
+      --bg:           #ffffff;
+      --bg-tonal:     #f3f3f3;
+      --text-primary: #1a1c1c;
+      --text-900:     #181818;
+      --text-body:    #474747;
+      --text-muted:   #9e9e9e;
+      --text-faint:   #6b7280;
+      --text-soft:    #4b5563;
+      --neutral-300:  #dcdcdc;
+      --neutral-white:#ffffff;
+      --neutral-black:#000000;
+      --cream:        #e5e2e1;
+      --divider:      #d9d9d9;
+
+      --h1-size: 100px; --h1-lh: 0.92;
+      --h2-size: 72px;  --h2-lh: 72px;
+      --h5-size: 24px;  --h5-lh: 28px;
+      --h6-size: 10px;  --h6-ls: 3.6px;
+      --body-lg: 18px;  --body-lg-lh: 26px;
+      --body-md: 16px;  --body-md-lh: 30px;
+      --btn-sm:  11px;  --btn-sm-ls: 1.1px;
+      --btn-lg:  14px;  --btn-lg-ls: 3.2px;
+
+      --px: 48px;
+      --py-section: 128px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      background: var(--neutral-white);
+      color: var(--text-primary);
+      overflow-x: hidden;
+    }
+    img  { display: block; max-width: 100%; }
+    a    { text-decoration: none; color: inherit; }
+
+    /* ─── SCROLL REVEALS ───────────────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.75s cubic-bezier(0.16,1,0.3,1),
+                  transform 0.75s cubic-bezier(0.16,1,0.3,1);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-fade {
+      opacity: 0;
+      transition: opacity 1s cubic-bezier(0.16,1,0.3,1);
+    }
+    .reveal-fade.visible { opacity: 1; }
+    .delay-1 { transition-delay: 0.08s; }
+    .delay-2 { transition-delay: 0.16s; }
+    .delay-3 { transition-delay: 0.24s; }
+    .delay-4 { transition-delay: 0.32s; }
+    .delay-5 { transition-delay: 0.40s; }
+    .delay-6 { transition-delay: 0.48s; }
+
+    /* ─── NAV ──────────────────────────────────────────────────── */
+    .nav {
+      position: sticky; top: 0; z-index: 200;
+      background: #ffffff;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      width: 100%;
+    }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 32px var(--px);
+      max-width: 1536px; margin: 0 auto;
+    }
+    .nav-logo {
+      font-family: var(--font-body); font-weight: 800;
+      font-size: 24px; letter-spacing: -1.2px;
+      text-transform: uppercase; color: var(--neutral-black);
+    }
+    .nav-links { display: flex; align-items: center; }
+    .nav-link {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--btn-sm); letter-spacing: var(--btn-sm-ls);
+      text-transform: uppercase; color: var(--text-faint);
+      padding-left: 48px; position: relative;
+      transition: color 0.2s ease;
+    }
+    .nav-link:hover { color: var(--neutral-black); }
+    .nav-link.active {
+      color: var(--neutral-black);
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 5px;
+    }
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+    .nav-cta {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--btn-sm); letter-spacing: var(--btn-sm-ls);
+      text-transform: uppercase; color: var(--neutral-black);
+      border: 1px solid var(--neutral-black);
+      padding: 16px 32px;
+    }
+    .burger {
+      display: none; flex-direction: column;
+      justify-content: center; gap: 5px;
+      background: none; border: none;
+      padding: 4px; width: 32px; height: 32px;
+      cursor: pointer; flex-shrink: 0;
+    }
+    .burger span {
+      display: block; height: 1.5px;
+      background: var(--neutral-black);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .burger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .burger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .burger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    /* ─── MOBILE MENU ──────────────────────────────────────────── */
+    .mobile-menu {
+      display: none; position: fixed; inset: 0;
+      background: var(--neutral-white); z-index: 199;
+      flex-direction: column; justify-content: center;
+      align-items: flex-start;
+      padding: 96px 24px 48px; gap: 8px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+    .mobile-menu.open { opacity: 1; pointer-events: all; }
+    .mobile-menu-link {
+      font-family: var(--font-heading); font-weight: 800;
+      font-size: 36px; letter-spacing: -1px;
+      text-transform: uppercase; color: var(--text-primary);
+      padding: 12px 0; border-bottom: 1px solid var(--neutral-300);
+      width: 100%; display: block;
+    }
+    .mobile-menu-footer {
+      margin-top: auto;
+      font-family: var(--font-heading); font-weight: 400;
+      font-size: var(--h6-size); letter-spacing: var(--h6-ls);
+      text-transform: uppercase; color: var(--text-muted);
+    }
+
+    /* ─── DIVIDER ──────────────────────────────────────────────── */
+    .divider { height: 1px; background: var(--neutral-300); margin: 0 var(--px); }
+
+    /* ─── HERO ─────────────────────────────────────────────────── */
+    .hero-editorial {
+      padding: 80px var(--px) 64px;
+      max-width: 1536px; margin: 0 auto;
+      text-align: center;
+    }
+    .hero-eyebrow {
+      font-family: var(--font-heading); font-weight: 400;
+      font-size: var(--h6-size); letter-spacing: var(--h6-ls);
+      text-transform: uppercase; color: #777;
+      margin-bottom: 32px;
+    }
+    .hero-title {
+      font-family: var(--font-heading); font-weight: 800;
+      font-size: var(--h1-size); line-height: var(--h1-lh);
+      letter-spacing: -5.6px; text-transform: uppercase;
+      color: var(--text-primary);
+      margin-bottom: 29px;
+    }
+    .hero-byline {
+      display: flex; align-items: center; justify-content: center;
+      gap: 16px;
+    }
+    .hero-byline-text {
+      font-family: var(--font-body); font-weight: 400;
+      font-size: var(--body-lg); line-height: var(--body-lg-lh);
+      color: #616161;
+    }
+    .hero-byline-sep {
+      width: 2px; height: 25px;
+      background: var(--divider); flex-shrink: 0;
+    }
+
+    /* ─── GALLERY BENTO ────────────────────────────────────────── */
+    .gallery-bento {
+      display: flex; gap: 24px;
+      max-width: 1184px; margin: 0 auto;
+      padding: 0 var(--px);
+    }
+    .gallery-large {
+      flex: 0 0 740px; height: 392px;
+      overflow: hidden; position: relative;
+    }
+    .gallery-large img {
+      width: 102%; height: 100%; object-fit: cover;
+      position: absolute; top: 0; left: -1%;
+      transition: transform 0.8s cubic-bezier(0.16,1,0.3,1);
+    }
+    .gallery-large:hover img { transform: scale(1.03); }
+    .gallery-side {
+      flex: 1; height: 392px; overflow: hidden; position: relative;
+    }
+    .gallery-side img {
+      width: 102%; height: 100%; object-fit: cover;
+      position: absolute; top: 0; left: -1%;
+      transition: transform 0.8s cubic-bezier(0.16,1,0.3,1);
+    }
+    .gallery-side:hover img { transform: scale(1.03); }
+
+    /* ─── ARTICLE BODY ─────────────────────────────────────────── */
+    .article-body {
+      background: var(--neutral-white);
+      padding: 64px 0;
+      margin-top: 0;
+    }
+    .article-inner {
+      max-width: 730px; margin: 0 auto;
+      padding: 0 var(--px);
+      display: flex; flex-direction: column; gap: 40px;
+    }
+    .article-blockquote {
+      border-left: 6px solid var(--neutral-black);
+      padding-left: 40px;
+    }
+    .article-blockquote p {
+      font-family: var(--font-body); font-weight: 400;
+      font-size: 24px; line-height: 34px;
+      color: #616161;
+    }
+    .article-intro p {
+      font-family: var(--font-body); font-weight: 300;
+      font-size: var(--body-md); line-height: var(--body-md-lh);
+      color: #616161;
+    }
+    .article-divider {
+      height: 1px; background: var(--neutral-300);
+      margin: 0;
+    }
+    .article-section-heading {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--h5-size); line-height: var(--h5-lh);
+      color: var(--text-primary);
+    }
+    .article-section-heading + .article-text {
+      margin-top: -16px;
+    }
+    .article-text {
+      display: flex; flex-direction: column; gap: 0;
+    }
+    .article-text p {
+      font-family: var(--font-body); font-weight: 300;
+      font-size: var(--body-md); line-height: var(--body-md-lh);
+      color: #616161;
+      margin-bottom: 20px;
+    }
+    .article-text p:last-child { margin-bottom: 0; }
+    .article-text a {
+      text-decoration: underline;
+      text-decoration-color: rgba(26,28,28,0.4);
+      transition: text-decoration-color 0.2s;
+    }
+    .article-text a:hover { text-decoration-color: var(--text-primary); }
+
+    /* ─── CTA BOX ──────────────────────────────────────────────── */
+    .article-cta-box {
+      background: var(--neutral-white);
+      border: 1px solid var(--neutral-300);
+      display: flex; align-items: center; gap: 30px;
+      padding: 0 32px;
+    }
+    .article-cta-text-wrap {
+      display: flex; align-items: center;
+      padding: 32px 0; flex-shrink: 0; width: 296px;
+    }
+    .article-cta-text {
+      font-family: var(--font-body); font-weight: 400;
+      font-size: var(--body-md); line-height: var(--body-md-lh);
+      color: var(--text-primary);
+    }
+    .article-cta-sep {
+      width: 1px; height: 92px;
+      background: var(--divider); flex-shrink: 0;
+    }
+    .article-cta-btn {
+      flex: 1; height: 48px;
+      background: var(--text-900); border: 1px solid var(--text-900);
+      display: flex; align-items: center; justify-content: center;
+      gap: 10px; cursor: pointer;
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--btn-lg); letter-spacing: var(--btn-lg-ls);
+      text-transform: uppercase; color: white;
+      transition: background 0.2s ease;
+    }
+    .article-cta-btn:hover { background: #333; }
+    .article-cta-btn svg { flex-shrink: 0; }
+
+    /* ─── SOCIAL ICONS ─────────────────────────────────────────── */
+    .social-icons {
+      display: flex; gap: 12px; align-items: center;
+    }
+    .social-icon {
+      width: 43px; height: 43px;
+      background: var(--neutral-black);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; flex-shrink: 0;
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1),
+                  background 0.2s ease;
+    }
+    .social-icon:hover {
+      transform: scale(1.15) translateY(-2px);
+      background: #333;
+    }
+    .social-icon svg {
+      width: 18px; height: 18px;
+      fill: white;
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .social-icon:hover svg { transform: scale(1.1); }
+
+    /* ─── TEAM ─────────────────────────────────────────────────── */
+    .team {
+      max-width: 1536px; margin: 0 auto;
+      padding: var(--py-section) var(--px);
+      display: flex; flex-direction: column; gap: 64px;
+    }
+    .team-header {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      padding-bottom: 33px;
+      border-bottom: 1px solid rgba(198,198,198,0.2);
+    }
+    .team-heading {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--h5-size); line-height: var(--h5-lh);
+      color: var(--text-primary);
+    }
+    .team-all-link {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--btn-sm); letter-spacing: var(--btn-sm-ls);
+      text-transform: uppercase; color: #5f5e5e;
+      transition: color 0.2s;
+    }
+    .team-all-link:hover { color: var(--text-primary); }
+    .team-grid {
+      display: grid; grid-template-columns: repeat(4,1fr); gap: 32px;
+    }
+    .team-card {
+      display: flex; flex-direction: column; gap: 20px;
+    }
+    .team-photo {
+      aspect-ratio: 4/5; overflow: hidden; position: relative;
+    }
+    .team-photo img {
+      width: 100%; height: 100%; object-fit: cover;
+      filter: saturate(0);
+      transition: filter 0.5s ease, transform 0.6s cubic-bezier(0.16,1,0.3,1);
+    }
+    .team-card:hover .team-photo img {
+      filter: saturate(1);
+      transform: scale(1.03);
+    }
+    .team-info { display: flex; flex-direction: column; gap: 6px; }
+    .team-role {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--btn-sm); letter-spacing: var(--btn-sm-ls);
+      text-transform: uppercase; color: var(--text-muted);
+    }
+    .team-name {
+      font-family: var(--font-body); font-weight: 600;
+      font-size: var(--body-lg); line-height: var(--body-lg-lh);
+      color: var(--text-primary);
+    }
+
+    /* ─── CTA DARK ─────────────────────────────────────────────── */
+    .cta-section {
+      background: var(--neutral-black);
+      padding: var(--py-section) var(--px);
+    }
+    .cta-inner {
+      max-width: 1536px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .cta-heading {
+      font-family: var(--font-heading); font-weight: 800;
+      font-size: var(--h2-size); line-height: var(--h2-lh);
+      color: var(--cream);
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.75s cubic-bezier(0.16,1,0.3,1),
+                  transform 0.75s cubic-bezier(0.16,1,0.3,1);
+    }
+    .cta-heading.visible { opacity: 1; transform: translateY(0); }
+    .cta-sub {
+      font-family: var(--font-heading); font-weight: 400;
+      font-size: var(--h6-size); letter-spacing: var(--h6-ls);
+      text-transform: uppercase; color: var(--cream);
+      opacity: 0.6; margin-top: 24px;
+    }
+    .cta-right {
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    .btn-primary {
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px 72px;
+      background: var(--cream); color: var(--neutral-black);
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--btn-lg); letter-spacing: var(--btn-lg-ls);
+      text-transform: uppercase; cursor: pointer;
+      transition: background 0.2s ease;
+      white-space: nowrap;
+    }
+    .btn-primary:hover { background: white; }
+    .btn-secondary {
+      display: flex; align-items: center; justify-content: center;
+      padding: 25px 52px;
+      border: 1px solid rgba(229,226,225,0.2); color: var(--cream);
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: var(--btn-lg); letter-spacing: var(--btn-lg-ls);
+      text-transform: uppercase; cursor: pointer;
+      transition: border-color 0.2s ease;
+      white-space: nowrap;
+    }
+    .btn-secondary:hover { border-color: rgba(229,226,225,0.6); }
+
+    /* ─── FOOTER ───────────────────────────────────────────────── */
+    .footer { background: var(--neutral-white); }
+    .footer-inner {
+      display: grid; grid-template-columns: repeat(4,1fr);
+      gap: 48px; padding: 96px var(--px);
+      max-width: 1536px; margin: 0 auto;
+    }
+    .footer-logo {
+      font-family: var(--font-body); font-weight: 800;
+      font-size: 20px; text-transform: uppercase;
+      color: var(--neutral-black);
+      margin-bottom: 32px;
+    }
+    .footer-tagline {
+      font-family: var(--font-heading); font-weight: 400;
+      font-size: 10px; letter-spacing: 1.6px;
+      text-transform: uppercase; color: var(--neutral-black);
+      line-height: 1.625;
+    }
+    .footer-col-title {
+      font-family: var(--font-body); font-weight: 600;
+      font-size: 10px; letter-spacing: 3.2px;
+      text-transform: uppercase; color: var(--neutral-black);
+      opacity: 0.4; margin-bottom: 24px;
+    }
+    .footer-link {
+      display: block;
+      font-family: var(--font-heading); font-weight: 400;
+      font-size: 10px; letter-spacing: 1.6px;
+      text-transform: uppercase; color: var(--text-soft);
+      padding: 6.5px 0 2.5px;
+      transition: color 0.2s;
+    }
+    .footer-link:hover { color: var(--text-primary); }
+    .footer-newsletter-row {
+      display: flex; align-items: flex-end;
+      border-bottom: 1px solid rgba(0,0,0,0.2);
+      padding-bottom: 9px; margin-bottom: 24px;
+    }
+    .footer-newsletter-input {
+      flex: 1; background: none; border: none; outline: none;
+      font-family: var(--font-body); font-weight: 600;
+      font-size: 10px; letter-spacing: 1px;
+      text-transform: uppercase; color: #9ca3af;
+      padding: 14px 12px;
+    }
+    .footer-newsletter-btn {
+      background: none; border: none; cursor: pointer;
+      font-family: var(--font-body); font-weight: 600;
+      font-size: 10px; color: var(--neutral-black);
+      padding: 12px 0 13px;
+      text-transform: uppercase;
+      transition: opacity 0.2s;
+    }
+    .footer-newsletter-btn:hover { opacity: 0.6; }
+    .footer-copy {
+      font-family: var(--font-heading); font-weight: 400;
+      font-size: 10px; letter-spacing: 1.6px;
+      text-transform: uppercase; color: var(--text-faint);
+      line-height: 1.5; padding-top: 24px;
+    }
+
+    /* ─── RESPONSIVE ───────────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      :root { --px: 32px; --py-section: 80px; --h1-size: 72px; }
+      .gallery-bento { flex-direction: column; max-width: 100%; }
+      .gallery-large { flex: none; width: 100%; }
+      .gallery-side { flex: none; width: 100%; }
+      .team-grid { grid-template-columns: repeat(2,1fr); }
+      .article-cta-box { flex-direction: column; padding: 24px; gap: 16px; }
+      .article-cta-sep { width: 100%; height: 1px; }
+      .article-cta-text-wrap { padding: 0; width: 100%; }
+    }
+    @media (max-width: 768px) {
+      :root { --px: 20px; --py-section: 60px; --h1-size: 48px; }
+      .nav-links { display: none; }
+      .burger { display: flex; }
+      .mobile-menu { display: flex; }
+      .nav-inner { padding: 20px var(--px); }
+      .hero-title { letter-spacing: -2px; }
+      .hero-byline { flex-direction: column; gap: 8px; }
+      .hero-byline-sep { width: 40px; height: 1px; }
+      .team-grid { grid-template-columns: repeat(2,1fr); }
+      .cta-inner { flex-direction: column; align-items: flex-start; gap: 32px; }
+      .cta-right { width: 100%; }
+      .btn-primary, .btn-secondary { width: 100%; padding: 20px 24px; }
+      .footer-inner { grid-template-columns: 1fr; gap: 32px; padding: 40px var(--px); }
+      .article-inner { padding: 0 var(--px); }
+    }
+    @media (max-width: 400px) {
+      :root { --h1-size: 38px; }
+      .team-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ──────────────────────────────────────────────────── -->
+<nav class="nav" role="navigation">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">MONOLITH</a>
+    <div class="nav-links">
+      <a href="search-results.html" class="nav-link" style="padding-left:0;">LISTINGS</a>
+      <a href="about.html" class="nav-link">ABOUT</a>
+      <a href="editorial.html" class="nav-link active">EDITORIAL</a>
+      <a href="contact.html" class="nav-link">CONTACT</a>
+    </div>
+    <div class="nav-right">
+      <a href="contact.html" class="nav-cta">ENQUIRE</a>
+      <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ── MOBILE MENU ───────────────────────────────────────────── -->
+<div class="mobile-menu" id="mobileMenu" role="dialog" aria-label="Navigation">
+  <a href="search-results.html" class="mobile-menu-link">LISTINGS</a>
+  <a href="about.html" class="mobile-menu-link">ABOUT</a>
+  <a href="editorial.html" class="mobile-menu-link">EDITORIAL</a>
+  <a href="contact.html" class="mobile-menu-link">CONTACT</a>
+  <p class="mobile-menu-footer">ESTABLISHED 2024</p>
+</div>
+
+<div class="divider"></div>
+
+<!-- ── HERO ─────────────────────────────────────────────────── -->
+<div class="hero-editorial">
+  <p class="hero-eyebrow reveal">ESTABLISHED 2024</p>
+  <h1 class="hero-title reveal delay-1">THE QUIET<br>ARCHITECTURE OF<br>LIVING WELL</h1>
+  <div class="hero-byline reveal delay-2">
+    <span class="hero-byline-text">Written by Giles Routledge</span>
+    <div class="hero-byline-sep"></div>
+    <span class="hero-byline-text">3 minutes read</span>
+  </div>
+</div>
+
+<!-- ── GALLERY BENTO ────────────────────────────────────────── -->
+<div class="gallery-bento reveal">
+  <div class="gallery-large">
+    <img src="https://www.figma.com/api/mcp/asset/e5e695d0-4491-4fc1-ac76-023f3fd72182"
+         alt="Editorial feature — architectural interior" loading="lazy" />
+  </div>
+  <div class="gallery-side">
+    <img src="https://www.figma.com/api/mcp/asset/a21804de-475b-4cb8-859b-82958dc23189"
+         alt="Feature property exterior" loading="lazy" />
+  </div>
+</div>
+
+<!-- ── ARTICLE BODY ─────────────────────────────────────────── -->
+<section class="article-body">
+  <div class="article-inner">
+
+    <!-- Blockquote -->
+    <div class="article-blockquote reveal">
+      <p>How the most considered homes in 2026 aren't designed to impress — they're designed to feel.</p>
+    </div>
+
+    <!-- Intro -->
+    <div class="article-intro reveal">
+      <p>There was a time when luxury in architecture meant excess. Marble lobbies, double-height atriums, rooms built for spectacle rather than life. But something has shifted. The most compelling residential projects emerging in 2026 share an unlikely quality: restraint. They are homes where every threshold, every material choice, every fall of light has been considered not for its visual drama, but for how it shapes an ordinary Monday morning. A cup of coffee by a window that frames the right tree. A hallway that slows your pace without you noticing. The new luxury isn't loud — it's felt. And it suggests that architecture's most profound role has never been to shelter us from the world, but to quietly recalibrate our relationship with it.</p>
+    </div>
+
+    <div class="article-divider reveal"></div>
+
+    <!-- Section 1 -->
+    <h2 class="article-section-heading reveal">The Return of Material Honesty</h2>
+
+    <div class="article-text reveal">
+      <p>We are witnessing a decisive turn away from surfaces that pretend to be something they are not. The polished-to-perfection aesthetic that dominated the last decade is giving way to something far more compelling: material honesty. Natural stone with its visible geological history. Solid timber that breathes, shifts, and ages alongside the people who live with it. Clay, lime plaster, patinated metal — materials specified not for how they photograph, but for how they feel beneath a hand.</p>
+      <p>This isn't rustic nostalgia. It is a sophisticated recognition that the most enduring spaces carry texture and time within them. Leading studios across Europe and beyond are increasingly allowing <a href="https://www.studioforma.ch/en/architecture-2026/" target="_blank">materials to appear in their pure form</a> — no cladding, no imitation — creating interiors with a depth that synthetic finishes simply cannot replicate. Venetian plaster walls, handmade tiles, and sculptural details from <a href="https://rohhabibi.com/blog/luxury-home-design-trends-for-2026" target="_blank">artisan makers</a> are replacing the flawless uniformity of factory production.</p>
+      <p>The result is architecture that ages with dignity rather than becoming outdated. Spaces develop character over years, not despite the passing of time but because of it. For the design-conscious homeowner, this represents a more honest transaction: a home that tells you the truth about what it is made of, and rewards your attention with richness that deepens rather than fades.</p>
+    </div>
+
+    <div class="article-divider reveal"></div>
+
+    <!-- Section 2 -->
+    <h2 class="article-section-heading reveal">Homes That Breathe, Restore, and Adapt</h2>
+
+    <div class="article-text reveal">
+      <p>The conversation around wellness in architecture has matured. It has moved beyond the token yoga room or the spa bathroom with a rainfall showerhead. In 2026, wellness is embedded in the architecture itself — in the building envelope, the air you breathe, the quality of silence in a room.</p>
+      <p><a href="https://foundassociates.com/exploring-the-latest-trends-in-residential-architecture-for-2026/" target="_blank">Biophilic design principles</a> — views onto greenery, internal courtyards, planted terraces — are now standard considerations in serious residential briefs. But the shift runs deeper than planting. It is about environmental performance becoming invisible: highly insulated envelopes, intelligent ventilation, low-VOC finishes, and <a href="https://teresacowartteam.com/blog/luxury-home-design-trends-for-2026" target="_blank">spaces carefully tuned for natural light and air quality</a>. These are not features to be marketed. They are the quiet infrastructure of a home that makes you feel better without ever explaining why.</p>
+      <p>Flexibility, too, has become a form of care. The most <a href="https://hd2architects.com/2026-residential-architecture-trends/" target="_blank">thoughtful residential layouts in 2026</a> are designed around adaptability — rooms that shift purpose across a day, across a decade, across generations. A study that becomes a nursery. A guest suite with its own entrance that serves an ageing parent. Architecture is no longer planning for one perfect moment; it is planning for a life that changes shape.</p>
+    </div>
+
+    <!-- CTA Box -->
+    <div class="article-cta-box reveal">
+      <div class="article-cta-text-wrap">
+        <p class="article-cta-text">Are you ready to join the conversation?</p>
+      </div>
+      <div class="article-cta-sep"></div>
+      <button class="article-cta-btn">
+        GET IN TOUCH
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M4 10h12M12 6l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Social Icons -->
+    <div class="social-icons reveal">
+      <!-- Facebook -->
+      <a href="#" class="social-icon" aria-label="Facebook">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+          <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+        </svg>
+      </a>
+      <!-- X / Twitter -->
+      <a href="#" class="social-icon" aria-label="Twitter / X">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+        </svg>
+      </a>
+      <!-- Instagram -->
+      <a href="#" class="social-icon" aria-label="Instagram">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="fill:none">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none"/>
+          <circle cx="12" cy="12" r="4" fill="none"/>
+          <circle cx="17.5" cy="6.5" r="1.5" fill="white" stroke="none"/>
+        </svg>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── TEAM ──────────────────────────────────────────────────── -->
+<div class="team">
+  <div class="team-header reveal">
+    <h2 class="team-heading">THE VISIONARIES</h2>
+    <a href="#" class="team-all-link">ALL ARCHITECTS</a>
+  </div>
+  <div class="team-grid">
+    <div class="team-card reveal delay-1">
+      <div class="team-photo">
+        <img src="images/team-julian-vance.png" alt="Julian Vance" loading="lazy" />
+      </div>
+      <div class="team-info">
+        <p class="team-role">PRINCIPAL ARCHITECT</p>
+        <p class="team-name">JULIAN VANCE</p>
+      </div>
+    </div>
+    <div class="team-card reveal delay-2">
+      <div class="team-photo">
+        <img src="images/team-elara-koss.png" alt="Elara Koss" loading="lazy" />
+      </div>
+      <div class="team-info">
+        <p class="team-role">CURATION DIRECTOR</p>
+        <p class="team-name">ELARA KOSS</p>
+      </div>
+    </div>
+    <div class="team-card reveal delay-3">
+      <div class="team-photo">
+        <img src="images/team-marcia-thorne.png" alt="Marcia Thorne" loading="lazy" />
+      </div>
+      <div class="team-info">
+        <p class="team-role">ESTATE STRATEGIST</p>
+        <p class="team-name">MARCIA THORNE</p>
+      </div>
+    </div>
+    <div class="team-card reveal delay-4">
+      <div class="team-photo">
+        <img src="images/team-anna-reid.png" alt="Anna Reid" loading="lazy" />
+      </div>
+      <div class="team-info">
+        <p class="team-role">CLIENT LIAISON</p>
+        <p class="team-name">ANNA REID</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── CTA DARK ──────────────────────────────────────────────── -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <div>
+      <h2 class="cta-heading">BUILD YOUR<br>PRIVATE GALLERY.</h2>
+      <p class="cta-sub">EXCLUSIVE ADVISORY SERVICES AVAILABLE UPON REQUEST.</p>
+    </div>
+    <div class="cta-right reveal">
+      <a href="#" class="btn-primary">START ENQUIRY</a>
+      <a href="#" class="btn-secondary">DOWNLOAD DOSSIER</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ────────────────────────────────────────────────── -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <p class="footer-logo">MONOLITH</p>
+      <p class="footer-tagline">
+        A GLOBAL NETWORK OF ARCHITECTURAL<br>
+        REAL ESTATE SPECIALISTS.<br><br>
+        99 HUDSON STREET,<br>
+        NEW YORK, NY 10013
+      </p>
+    </div>
+    <div>
+      <p class="footer-col-title">CONNECT</p>
+      <a href="#" class="footer-link">INSTAGRAM</a>
+      <a href="#" class="footer-link">LINKEDIN</a>
+    </div>
+    <div>
+      <p class="footer-col-title">LEGAL</p>
+      <a href="#" class="footer-link">PRIVACY</a>
+      <a href="#" class="footer-link">TERMS</a>
+    </div>
+    <div>
+      <p class="footer-col-title">NEWSLETTER</p>
+      <div class="footer-newsletter-row">
+        <input class="footer-newsletter-input" type="email" placeholder="EMAIL ADDRESS" aria-label="Email address" />
+        <button class="footer-newsletter-btn">JOIN</button>
+      </div>
+      <p class="footer-copy">© 2024 MONOLITH. THE BLUEPRINT<br>OF SPACE.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* ── Scroll reveals ── */
+  const revealEls = document.querySelectorAll('.reveal, .cta-heading');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  revealEls.forEach(el => io.observe(el));
+
+  /* Trigger above-fold elements immediately */
+  setTimeout(() => {
+    document.querySelectorAll('.hero-editorial .reveal').forEach(el => el.classList.add('visible'));
+  }, 80);
+
+  /* ── Burger menu ── */
+  const burger = document.getElementById('burger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  burger.addEventListener('click', () => {
+    const open = burger.classList.toggle('open');
+    mobileMenu.classList.toggle('open', open);
+    burger.setAttribute('aria-expanded', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+  mobileMenu.querySelectorAll('.mobile-menu-link').forEach(l => {
+    l.addEventListener('click', () => {
+      burger.classList.remove('open');
+      mobileMenu.classList.remove('open');
+      burger.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    });
+  });
+</script>
+</body>
+</html>

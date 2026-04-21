@@ -17,7 +17,7 @@
       --font-body:    'Inter', sans-serif;
 
       /* Colors */
-      --bg:           #f9f9f9;
+      --bg:           #ffffff;
       --bg-tonal:     #f3f3f3;
       --bg-dark:      #000000;
       --text-primary: #1a1c1c;
@@ -98,7 +98,7 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      background: rgba(249, 249, 249, 0.78);
+      background: #ffffff;
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       width: 100%;
@@ -187,7 +187,7 @@
 
     /* ─── HERO ───────────────────────────────────────────────────────── */
     .hero {
-      padding: 192px var(--px);
+      padding: 96px var(--px) 192px;
       max-width: 1536px;
       margin: 0 auto;
     }
@@ -242,6 +242,7 @@
     .hero-body {
       font-family: var(--font-body);
       font-size: var(--body-lg);
+      font-weight: 300;
       line-height: var(--body-lg-lh);
       color: var(--text-body);
       padding: 0 32px 32px;
@@ -493,11 +494,10 @@
       height: 340px;
     }
     .team-photo-wrap img {
-      width: 125%;
+      width: 100%;
       height: 100%;
       object-fit: cover;
       object-position: center top;
-      margin-left: -12.5%;
       filter: grayscale(100%);
       transition: filter 0.5s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
     }
@@ -970,13 +970,13 @@
   <div class="nav-inner">
     <a href="#" class="nav-logo">MONOLITH</a>
     <div class="nav-links">
-      <a href="#" class="nav-link active" style="padding-left:0; border-bottom: 2px solid black; padding-bottom: 3px;">LISTINGS</a>
-      <a href="#" class="nav-link">ARCHITECTS</a>
-      <a href="#" class="nav-link">JOURNAL</a>
-      <a href="#" class="nav-link">CONTACT</a>
+      <a href="search-results.html" class="nav-link" style="padding-left:0;">LISTINGS</a>
+      <a href="about.html" class="nav-link">ABOUT</a>
+      <a href="editorial.html" class="nav-link">EDITORIAL</a>
+      <a href="contact.html" class="nav-link">CONTACT</a>
     </div>
     <div class="nav-right">
-      <a href="#" class="nav-cta"><span>ENQUIRE</span></a>
+      <a href="contact.html" class="nav-cta"><span>ENQUIRE</span></a>
       <button class="burger" id="burgerBtn" aria-label="Open menu" aria-expanded="false">
         <span></span>
         <span></span>
@@ -988,10 +988,10 @@
 
 <!-- ── MOBILE MENU ──────────────────────────────────────────────────────── -->
 <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
-  <a href="#" class="mobile-menu-link">LISTINGS</a>
-  <a href="#" class="mobile-menu-link">ARCHITECTS</a>
-  <a href="#" class="mobile-menu-link">JOURNAL</a>
-  <a href="#" class="mobile-menu-link">CONTACT</a>
+  <a href="search-results.html" class="mobile-menu-link">LISTINGS</a>
+  <a href="about.html" class="mobile-menu-link">ABOUT</a>
+  <a href="editorial.html" class="mobile-menu-link">EDITORIAL</a>
+  <a href="contact.html" class="mobile-menu-link">CONTACT</a>
   <p class="mobile-menu-footer">ESTABLISHED 2024</p>
 </div>
 
@@ -1012,7 +1012,7 @@
     <div class="hero-right reveal delay-3">
       <p class="hero-body">Curating spaces where brutalist honesty meets refined luxury. We don't sell property; we represent architectural statements.</p>
       <div class="hero-divider"></div>
-      <a href="#" class="hero-cta">
+      <a href="search-results.html" class="hero-cta">
         <span class="hero-cta-label">VIEW RECENT ADDITIONS</span>
         <div class="hero-arrow">
           <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1170,7 +1170,7 @@
       <p class="cta-sub reveal delay-2">EXCLUSIVE ADVISORY SERVICES AVAILABLE UPON REQUEST.</p>
     </div>
     <div class="cta-right reveal delay-3">
-      <a href="#" class="btn-primary"><span>START ENQUIRY</span></a>
+      <a href="contact.html" class="btn-primary"><span>START ENQUIRY</span></a>
       <a href="#" class="btn-secondary">DOWNLOAD DOSSIER</a>
     </div>
   </div>
